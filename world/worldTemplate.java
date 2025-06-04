@@ -18,33 +18,45 @@ import javax.imageio.ImageIO;
 
 public class worldTemplate extends JPanel implements KeyListener, MouseListener {
     
-    private BufferedImage[] tiles = new BufferedImage[77];
+    public BufferedImage[] grassTiles = new BufferedImage[77];
+    public BufferedImage[] pathTiles = new BufferedImage[77];
 
-    private int[][] grassTiles = {
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+    public int[][] grassTilesWorld = {
+        {0}
     };
 
-    public final int worldWidth = 1472+16; //pixels
-    public final int worldHeight = 720; //pixels
-
-
-    player myPlayer = new player();
+    public int[][] pathTilesWorld = {
+        {0}
+    };
 
     public int worldXOffset = 0;
     public int worldYOffset = 0;
 
-    public worldTemplate(){
+    public worldTemplate() {
         //get grass tiles
-        getImages("world/tileset/grass/", tiles, 32, 77);
+        getImages("world/tileset/grass/", grassTiles, 32, 77);
+        getImages("world/tileset/path/", pathTiles, 32, 77);
+    }
+
+    public int getWorldWidth() {
+        int longestRow = 0;
+        for (int i = 0; i < grassTilesWorld.length; i++) {
+            if (grassTilesWorld[i].length > longestRow) {
+                longestRow = grassTilesWorld[i].length;
+            }
+        }
+        return longestRow * 32;
+    }
+    public int getWorldHeight() {
+        return grassTilesWorld.length * 32;
+    }
+
+    public void setGrassTilesWorld(int[][] newWorld) {
+        this.grassTilesWorld = newWorld;
+    }
+
+    public void setPathTilesWorld(int[][] newWorld) {
+        this.pathTilesWorld = newWorld;
     }
 
     private void getImages(String direction, BufferedImage[] image,int size, int count) {
@@ -63,12 +75,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     }
 
     public void update() {
-        // Update logic for the world can be added here
-        myPlayer.update(this);
         
-
-
-
     }
 
     public void paintComponent(Graphics g) {
@@ -78,19 +85,18 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 1280, 720);
         
-        // Draw the tiles
-        for (int y = 0; y < grassTiles.length; y++) {
-            for (int x = 0; x < grassTiles[y].length; x++) {
-                int tileIndex = grassTiles[y][x];
+    }
+
+    public void drawTiles(Graphics g, int[][] tilesWorld, BufferedImage[] tiles) {
+        for (int y = 0; y < tilesWorld.length; y++) {
+            for (int x = 0; x < tilesWorld[y].length; x++) {
+                int tileIndex = tilesWorld[y][x];
                 if (tileIndex >= 0 && tileIndex < tiles.length) {
                     BufferedImage tileImage = tiles[tileIndex];
                     g.drawImage(tileImage, x * 32-worldXOffset, y * 32-worldYOffset, null);
                 }
             }
         }
-
-        //draw player
-        myPlayer.draw(g,worldXOffset, worldYOffset);
     }
 
     @Override
@@ -125,35 +131,11 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            myPlayer.yVel = -5; // Move up
-        } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            myPlayer.yVel = 5; // Move down
-        } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            myPlayer.xVel = -5; // Move left
-        } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            myPlayer.xVel = 5; // Move right
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            myPlayer.speed = 2; // Increase speed
-        }
+        
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            myPlayer.yVel = 0; // Move up
-        } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            myPlayer.yVel = 0; // Move down
-        } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            myPlayer.xVel = 0; // Move left
-        } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            myPlayer.xVel = 0; // Move right
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            myPlayer.speed = 1; // Increase speed
-        }
+        
     }
 }
