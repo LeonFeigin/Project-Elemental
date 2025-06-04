@@ -5,10 +5,6 @@ import javax.swing.*;
 
 import player.player;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -25,9 +21,9 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     private BufferedImage[] tiles = new BufferedImage[77];
 
     private int[][] grassTiles = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7},
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        {-1,-1,-1,-1,-1,-1,1,-1,-1,-1},
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
@@ -37,32 +33,38 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
     };
 
+    public final int worldWidth = 1472+16; //pixels
+    public final int worldHeight = 720; //pixels
+
 
     player myPlayer = new player();
 
+    public int worldXOffset = 0;
+    public int worldYOffset = 0;
+
     public worldTemplate(){
         //get grass tiles
-        for (int i = 0; i < 77; i++) {
-            try {
-                BufferedImage original = ImageIO.read(new File("world/tileset/grass/" + i + ".png"));
-                BufferedImage scaled = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-                double scaleX = 64.0 / original.getWidth();
-                double scaleY = 64.0 / original.getHeight();
-                AffineTransform at = AffineTransform.getScaleInstance(scaleX, scaleY);
+        getImages("world/tileset/grass/", tiles, 32, 77);
+    }
+
+    private void getImages(String direction, BufferedImage[] image,int size, int count) {
+        try{
+            for (int i = 0; i < count; i++) {
+                BufferedImage original = ImageIO.read(new File(direction + i+ ".png"));
+                BufferedImage scaled = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                AffineTransform at = AffineTransform.getScaleInstance(size / original.getWidth(), size / original.getHeight());
                 AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
                 scaleOp.filter(original, scaled);
-                this.tiles[i] = scaled;
-            } catch (IOException ex) {
-                System.out.println("File not found! " + "world/tileset/grass/" + i + ".png");
+                image[i] = scaled;
             }
+        }catch (IOException ex) {
+            System.out.println("File not found!");
         }
-
-
     }
 
     public void update() {
         // Update logic for the world can be added here
-        myPlayer.update();
+        myPlayer.update(this);
         
 
 
@@ -72,7 +74,9 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        
+        //draw a white background
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 1280, 720);
         
         // Draw the tiles
         for (int y = 0; y < grassTiles.length; y++) {
@@ -80,13 +84,13 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
                 int tileIndex = grassTiles[y][x];
                 if (tileIndex >= 0 && tileIndex < tiles.length) {
                     BufferedImage tileImage = tiles[tileIndex];
-                    g.drawImage(tileImage, x * 64, y * 64, null);
+                    g.drawImage(tileImage, x * 32-worldXOffset, y * 32-worldYOffset, null);
                 }
             }
         }
 
         //draw player
-        myPlayer.draw(g);
+        myPlayer.draw(g,worldXOffset, worldYOffset);
     }
 
     @Override
@@ -130,6 +134,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         } else if(e.getKeyCode() == KeyEvent.VK_D) {
             myPlayer.xVel = 5; // Move right
         }
+
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            myPlayer.speed = 2; // Increase speed
+        }
     }
 
     @Override
@@ -142,6 +150,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             myPlayer.xVel = 0; // Move left
         } else if(e.getKeyCode() == KeyEvent.VK_D) {
             myPlayer.xVel = 0; // Move right
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            myPlayer.speed = 1; // Increase speed
         }
     }
 }
