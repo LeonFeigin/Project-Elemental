@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import enemy.enemyTemplate;
 import player.player;
+import ui.mainUI;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -93,6 +94,7 @@ public class testWorld extends worldTemplate {
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
         setCurrentPlayer(currentPlayer);
+        currentUI = new mainUI(this);
     }
 
     @Override
@@ -107,6 +109,9 @@ public class testWorld extends worldTemplate {
 
         //draw enemy
         currentEnemy.draw(g, worldXOffset, worldYOffset);
+
+        //draw UI
+        currentUI.draw(g);
     }
 
     @Override

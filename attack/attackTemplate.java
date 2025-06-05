@@ -19,10 +19,13 @@ public class attackTemplate {
     worldTemplate currentWorld; // Reference to the current world
 
     long lastTimeFired = System.currentTimeMillis(); // Timestamp of the last time the attack was fired
+    
+    private long attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
+    private int leftAmountOfShooting = 3;
 
-    public int attackCooldown = 1000; // Cooldown time for the attack in milliseconds
+    private float speed = 1; // Speed of the bullets fired by the attack
 
-    public attackTemplate(boolean isEnemyAttack, worldTemplate world) {
+    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world) {
         this.isEnemyAttack = isEnemyAttack;
         this.currentWorld = world; // Set the current world reference
     }
@@ -60,9 +63,23 @@ public class attackTemplate {
 
     private void attack(int attackType, int initX, int initY, int targetX, int targetY, boolean isEnemy) { // atatck method for firing bullets
         if(attackType == 0){ // straight line attack
-            // Create a new bullet and add it to the list
-            bullet newBullet = new bullet(initX, initY, targetX, targetY, isEnemy, currentWorld);
-            bullets.add(newBullet);
+            double angle = Math.atan2(targetY-initY,targetX-initX);
+            
+            float dx = targetX - initX;
+            float dy = targetY - initY;
+            float length = (float)Math.sqrt(dx * dx + dy * dy);
+
+            float vx = dx / length;
+            float vy = dy / length;
+
+            for (int i = -1; i < 2; i++) {
+                double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY+10*i) * Math.sin(angle) + initX;
+                double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY+10*i) * Math.cos(angle) + initY;
+
+                // System.out.println(newTargetX);
+                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this);
+                bullets.add(newBullet);
+            }
         }
     }
 
@@ -77,6 +94,10 @@ public class attackTemplate {
         if (bullets.isEmpty()) {
             isActive = false;
         }
+    }
+
+    public void removeBullet(bullet b) {
+        bullets.remove(b); // Remove the bullet from the list
     }
 
     public void drawBullets(Graphics g, int worldXOffset, int worldYOffset) {

@@ -1,5 +1,6 @@
 package player;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -20,6 +21,8 @@ public class player{
 
     private int currentFrame = 0;
     private long lastFrameChangeTime = 0;
+
+    private int playerHealth = 100; // Player health
 
     private BufferedImage idleImage;
     private BufferedImage[] runningDownImages = new BufferedImage[4];
@@ -51,7 +54,7 @@ public class player{
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        attack = new attackTemplate(false, currentWorld);
+        attack = new attackTemplate(false, 1, currentWorld);
     }
 
     public void update() {
@@ -88,6 +91,15 @@ public class player{
         currentWorld.worldXOffset = Math.min(Math.max(x - 640, 0), Math.max(currentWorld.getWorldWidth()-1280,0)); // Center camera on player
         currentWorld.worldYOffset = Math.min(Math.max(y - 360, 0), Math.max(currentWorld.getWorldHeight()-720,0)); // Center camera on player
     }
+    
+    public void takeDamage(int damage) {
+        playerHealth -= damage;
+    }
+
+    public int getHealth() {
+        return playerHealth;
+    }
+    
     public void draw(Graphics g,int worldXOffset, int worldYOffset) {
         if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {
             lastFrameChangeTime = System.currentTimeMillis();
@@ -107,6 +119,11 @@ public class player{
             img = runningRightImages[currentFrame];
         }
         
-        g.drawImage(img, x-worldXOffset, y-worldYOffset, null); 
+        g.drawImage(img, x-worldXOffset-16, y-worldYOffset-16, null); 
+
+        g.setColor(Color.RED);
+        g.fillArc(x-worldXOffset-6, y-worldYOffset-6, 12, 12, 0, 360);
+
+        // g.drawOval(x-8,y-8,16,16);
     }
 }

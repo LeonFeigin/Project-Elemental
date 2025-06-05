@@ -24,6 +24,8 @@ public class enemyTemplate {
 
     public int enemySize = 32;
 
+    public int health = 100;
+
     private int currentState = 0; // 0 for idle, 1 for running
 
     //enemy attack properties
@@ -45,7 +47,7 @@ public class enemyTemplate {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
-        attack = new attackTemplate(true, currentWorld);
+        attack = new attackTemplate(true, 1, currentWorld);
 
         idleImage = sprite.getImages("enemy/template/idle/", enemySize);
         sprite.getImages("enemy/template/running/down/", runningDownImages, enemySize, 4);
@@ -53,6 +55,14 @@ public class enemyTemplate {
         sprite.getImages("enemy/template/running/left/", runningLeftImages, enemySize, 4);
         sprite.getImages("enemy/template/running/right/", runningRightImages, enemySize, 4);
     }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            health = 0; // Ensure health does not go below zero
+            // Handle enemy death logic here, e.g., remove from world
+        }
+    } 
 
     public void update() {
         // Get current time for movement logic
@@ -136,6 +146,10 @@ public class enemyTemplate {
         g.drawImage(img, x-worldXOffset, y-worldYOffset, null); 
 
         attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
+        g.setColor(Color.BLACK);
+        g.fillRoundRect(x-2-worldXOffset, y-10-worldYOffset,36, 8,3,12);
+        g.setColor(Color.RED);
+        g.fillRoundRect(x-2-worldXOffset, y-10-worldYOffset,(int)(36*(health/100.0)) , 8,3,12);
     }
 
 }

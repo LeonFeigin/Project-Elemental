@@ -10,8 +10,8 @@ public class bullet{
     float x; // X position of the bullet
     float y; // Y position of the bullet
 
-    int targetX;
-    int targetY;
+    float vx;
+    float vy;
 
     float speed = 1; // Speed of the bullet
 
@@ -21,22 +21,17 @@ public class bullet{
 
     worldTemplate currentWorld; // Reference to the current world
 
-    float vx = 0, vy = 0;
+    attackTemplate attackParent; // Reference to the attack that fired this bullet
 
-    public bullet(int startX, int startY, int targetX, int targetY, boolean isEnemy, worldTemplate world) {
+    public bullet(int startX, int startY, float vx, float vy, float speed, boolean isEnemy, worldTemplate world, attackTemplate attackParent) {
         this.x = startX;
         this.y = startY;
-        this.targetX = targetX;
-        this.targetY = targetY;
+        this.vx = vx;
+        this.vy = vy;
+        this.speed = speed;
         this.currentWorld = world;
         this.isEnemy = isEnemy;
-
-        float dx = targetX - x;
-        float dy = targetY - y;
-        float length = (float)Math.sqrt(dx * dx + dy * dy);
-
-        vx = dx / length;
-            vy = dy / length;
+        this.attackParent = attackParent;
 
         bulletImage = sprite.getImages("attack/bulletImage/", 12);
     }
@@ -45,6 +40,15 @@ public class bullet{
         // Move bullet along velocity
         x += speed * vx;
         y += speed * vy;
+
+        //detect collision
+        if(isEnemy){
+            float distanceToPlayer = (float)Math.sqrt(Math.pow(x - currentWorld.currentPlayer.x, 2) + Math.pow(y - currentWorld.currentPlayer.y, 2));
+            if(distanceToPlayer < 6) {
+                currentWorld.currentPlayer.takeDamage(10); // Deal damage to the player
+                attackParent.removeBullet(this);
+            }
+        }
     }
 
     public void draw(Graphics g, int worldXOffset, int worldYOffset) {

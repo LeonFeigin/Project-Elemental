@@ -34,6 +34,8 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     public player currentPlayer;
 
+    public ui.mainUI currentUI;
+
     public worldTemplate() {
         //get grass tiles
         getImages("world/tileset/grass/", grassTiles, 32, 77);
