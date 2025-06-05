@@ -3,6 +3,7 @@ package player;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import attack.attackTemplate;
 import world.worldTemplate;
 
 public class player{
@@ -30,7 +31,9 @@ public class player{
 
     private worldTemplate currentWorld;
 
-    public player() {
+    private attackTemplate attack; // Attack template for player
+
+    public player(worldTemplate currentWorld) {
         //load idle image
             idleImage = sprite.getImages("player/template/idle/", playerSize);
 
@@ -46,13 +49,12 @@ public class player{
             // load running right images
             sprite.getImages("player/template/running/right/", runningRightImages, playerSize,4);
         
-        
+        this.currentWorld = currentWorld; // Set the current world reference
+
+        attack = new attackTemplate(false, currentWorld);
     }
 
-    public void update(worldTemplate world) {
-        // update world reference
-        this.currentWorld = world;
-
+    public void update() {
         //slow down if player moving x and y at the same time
         if (xVel != 0 && yVel != 0) {
             maxSpeed = 1.4f; // Diagonal movement speed
@@ -66,8 +68,8 @@ public class player{
         // Ensure player stays within bounds
         if (x < 0){x = 0;}
         if (y < 0){y = 0;}
-        if (x > world.getWorldWidth() - playerSize){ x = world.getWorldWidth() - playerSize;}
-        if (y > world.getWorldHeight() - playerSize){ y = world.getWorldHeight() - playerSize;}
+        if (x > currentWorld.getWorldWidth() - playerSize){ x = currentWorld.getWorldWidth() - playerSize;}
+        if (y > currentWorld.getWorldHeight() - playerSize){ y = currentWorld.getWorldHeight() - playerSize;}
 
         // Update current state based on velocity
         if (xVel != 0 || yVel != 0) {
@@ -83,8 +85,8 @@ public class player{
             lastFrameChangeTime = 0;
         }
 
-        world.worldXOffset = Math.min(Math.max(x - 640, 0), Math.max(world.getWorldWidth()-1280,0)); // Center camera on player
-        world.worldYOffset = Math.min(Math.max(y - 360, 0), Math.max(world.getWorldHeight()-720,0)); // Center camera on player
+        currentWorld.worldXOffset = Math.min(Math.max(x - 640, 0), Math.max(currentWorld.getWorldWidth()-1280,0)); // Center camera on player
+        currentWorld.worldYOffset = Math.min(Math.max(y - 360, 0), Math.max(currentWorld.getWorldHeight()-720,0)); // Center camera on player
     }
     public void draw(Graphics g,int worldXOffset, int worldYOffset) {
         if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {

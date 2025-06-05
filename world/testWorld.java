@@ -84,14 +84,15 @@ public class testWorld extends worldTemplate {
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
     };
 
-    player currentPlayer = new player();
+    public player currentPlayer = new player(this);
 
-    enemyTemplate currentEnemy = new enemyTemplate(640,260);
+    public enemyTemplate currentEnemy = new enemyTemplate(640,260, this);
 
     public testWorld() {
         super();
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
+        setCurrentPlayer(currentPlayer);
     }
 
     @Override
@@ -111,8 +112,8 @@ public class testWorld extends worldTemplate {
     @Override
     public void update() {
         super.update();
-        currentPlayer.update(this);
-        currentEnemy.update(this);
+        currentPlayer.update();
+        currentEnemy.update();
     }
 
     @Override

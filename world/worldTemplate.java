@@ -32,6 +32,8 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int worldXOffset = 0;
     public int worldYOffset = 0;
 
+    public player currentPlayer;
+
     public worldTemplate() {
         //get grass tiles
         getImages("world/tileset/grass/", grassTiles, 32, 77);
@@ -59,6 +61,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         this.pathTilesWorld = newWorld;
     }
 
+    public void setCurrentPlayer(player player) {
+        this.currentPlayer = player;
+    }
+
     private void getImages(String direction, BufferedImage[] image,int size, int count) {
         try{
             for (int i = 0; i < count; i++) {
@@ -82,7 +88,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         super.paintComponent(g);
         
         //draw a white background
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1280, 720);
         
     }

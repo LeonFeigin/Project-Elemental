@@ -1,8 +1,10 @@
 package enemy;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import attack.attackTemplate;
 import world.worldTemplate;
 import player.sprite;
 
@@ -26,7 +28,7 @@ public class enemyTemplate {
 
     //enemy attack properties
     public int attackRange = 800; // Range within which the enemy can attack
-
+    private attackTemplate attack; // Attack template for enemy
 
     private long lastTimeMoved = System.currentTimeMillis();
     private int nextTimeMove = 1000;
@@ -39,9 +41,11 @@ public class enemyTemplate {
     private BufferedImage[] runningLeftImages = new BufferedImage[4];
     private BufferedImage[] runningRightImages = new BufferedImage[4];
 
-    public enemyTemplate(int x, int y) {
+    public enemyTemplate(int x, int y, worldTemplate currentWorld) {
+        this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
+        attack = new attackTemplate(true, currentWorld);
 
         idleImage = sprite.getImages("enemy/template/idle/", enemySize);
         sprite.getImages("enemy/template/running/down/", runningDownImages, enemySize, 4);
@@ -50,10 +54,11 @@ public class enemyTemplate {
         sprite.getImages("enemy/template/running/right/", runningRightImages, enemySize, 4);
     }
 
-    public void update(worldTemplate world) {
+    public void update() {
+        // Get current time for movement logic
         long currentTime = System.currentTimeMillis();
 
-        currentWorld = world;
+        attack.update(); // Update attack state and bullets
 
         // Update current state based on velocity
         if (xVel != 0 || yVel != 0) {
@@ -70,11 +75,11 @@ public class enemyTemplate {
         // Ensure enemy stays within bounds
         if (x < 0){x = 0;}
         if (y < 0){y = 0;}
-        if (x > world.getWorldWidth() - enemySize){ x = world.getWorldWidth() - enemySize;}
-        if (y > world.getWorldHeight() - enemySize){ y = world.getWorldHeight() - enemySize;}
+        if (x > currentWorld.getWorldWidth() - enemySize){ x = currentWorld.getWorldWidth() - enemySize;}
+        if (y > currentWorld.getWorldHeight() - enemySize){ y = currentWorld.getWorldHeight() - enemySize;}
 
         //if player not detected, move randomly
-        if(lastTimeMoved + nextTimeMove < currentTime) {
+        if(lastTimeMoved + nextTimeMove < currentTime && attack.isActive() == false) {
             if(currentState == 1){
                 lastTimeMoved = currentTime;
                 currentFrame = 0; // Reset frame when moving
@@ -88,7 +93,21 @@ public class enemyTemplate {
             }
         }
 
-        
+        //check if player is within attack range
+        if (currentWorld.currentPlayer != null) {
+            int playerX = currentWorld.currentPlayer.x;
+            int playerY = currentWorld.currentPlayer.y;
+
+            // Calculate distance to player
+            double distanceToPlayer = Math.sqrt(Math.pow(playerX - x, 2) + Math.pow(playerY - y, 2));
+
+            // If within attack range, stop moving and prepare to attack
+            if (distanceToPlayer <= attackRange/2) {
+                xVel = 0;
+                yVel = 0;
+                attack.attack(0, x+8, y+8, currentWorld.currentPlayer);
+            }
+        }
     }
 
     public void draw(Graphics g, int worldXOffset, int worldYOffset ) {
@@ -110,9 +129,13 @@ public class enemyTemplate {
             img = runningRightImages[currentFrame];
         }
 
+        //debuging circle for attack range
+        g.setColor(Color.BLACK);
         g.drawOval(x - worldXOffset + enemySize / 2 - attackRange/2, y - worldYOffset + enemySize / 2 - attackRange/2, attackRange, attackRange);
         
         g.drawImage(img, x-worldXOffset, y-worldYOffset, null); 
+
+        attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
     }
 
 }
