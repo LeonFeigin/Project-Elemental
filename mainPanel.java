@@ -14,33 +14,30 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
     
     int stage = 0;
 
-    worldTemplate currentWorld = new testWorld();
+    worldTemplate currentWorld;
 
     long startTime = System.currentTimeMillis();
     int frames = 0;
 
     Timer timer;
     public mainPanel(){
+        setWorld(new testWorld());
+
         timer = new Timer(1, e -> {
             currentWorld.update();
-
-            //calculate FPS
-            frames++;
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - startTime >= 1000) {
-                System.out.println("FPS: " + frames);
-                frames = 0;
-                startTime = currentTime;
-            }
 
             repaint();
         });
         timer.start();
+    }
 
+    public void setWorld(worldTemplate world) {
+        this.currentWorld = world;
         addKeyListener(currentWorld);
         addMouseListener(currentWorld);
         setFocusable(true);
-        requestFocusInWindow();
+        currentWorld.requestFocusInWindow();
+
     }
 
 

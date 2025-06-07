@@ -16,6 +16,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 public class testWorld extends worldTemplate {
@@ -85,16 +87,56 @@ public class testWorld extends worldTemplate {
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
     };
 
-    public player currentPlayer = new player(this);
+    int[][] collideTiles = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
 
-    public enemyTemplate currentEnemy = new enemyTemplate(640,260, this);
+    public player currentPlayer = new player(33,33,this);
+
+    public ArrayList<enemyTemplate> enemies = new ArrayList<>();
+
+    // public enemyTemplate currentEnemy = new enemyTemplate(640,260, this);
 
     public testWorld() {
         super();
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
+        setCollideTiles(collideTiles);
         setCurrentPlayer(currentPlayer);
         currentUI = new mainUI(this);
+
+        for (int i = 0; i < 1; i++) {
+            enemies.add(new enemyTemplate((int)(Math.random() * 100)+500, (int)(Math.random() * 100)+200, this));
+        }
     }
 
     @Override
@@ -108,7 +150,9 @@ public class testWorld extends worldTemplate {
         currentPlayer.draw(g,worldXOffset, worldYOffset);
 
         //draw enemy
-        currentEnemy.draw(g, worldXOffset, worldYOffset);
+        for(enemyTemplate enemy : enemies) {
+            enemy.draw(g, worldXOffset, worldYOffset);
+        }
 
         //draw UI
         currentUI.draw(g);
@@ -118,46 +162,8 @@ public class testWorld extends worldTemplate {
     public void update() {
         super.update();
         currentPlayer.update();
-        currentEnemy.update();
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("Mouse clicked at: " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            currentPlayer.yVel = -5; // Move up
-        } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            currentPlayer.yVel = 5; // Move down
-        } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            currentPlayer.xVel = -5; // Move left
-        } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            currentPlayer.xVel = 5; // Move right
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentPlayer.speed = 3; // Increase speed
+        for(enemyTemplate enemy : enemies) {
+            enemy.update();
         }
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            currentPlayer.yVel = 0; // Move up
-        } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            currentPlayer.yVel = 0; // Move down
-        } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            currentPlayer.xVel = 0; // Move left
-        } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            currentPlayer.xVel = 0; // Move right
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentPlayer.speed = 2; // Increase speed
-        }
-    }
-    
 }

@@ -1,8 +1,11 @@
 package world;
 
 import java.awt.*;
+import java.awt.RenderingHints.Key;
+
 import javax.swing.*;
 
+import enemy.enemyTemplate;
 import player.player;
 
 import java.awt.event.KeyEvent;
@@ -14,6 +17,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 public class worldTemplate extends JPanel implements KeyListener, MouseListener {
@@ -29,12 +34,21 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         {0}
     };
 
+    public int[][] collideTiles = {
+        {0}
+    };
+
+
     public int worldXOffset = 0;
     public int worldYOffset = 0;
 
     public player currentPlayer;
 
     public ui.mainUI currentUI;
+
+    public boolean debugMode = false;
+
+    public ArrayList<enemyTemplate> enemies = new ArrayList<>();
 
     public worldTemplate() {
         //get grass tiles
@@ -63,8 +77,33 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         this.pathTilesWorld = newWorld;
     }
 
+    public void setCollideTiles(int[][] newWorld) {
+        this.collideTiles = newWorld;
+    }
+
     public void setCurrentPlayer(player player) {
         this.currentPlayer = player;
+    }
+
+    public ArrayList<enemyTemplate> getEnemies() {
+        return enemies;
+    }
+
+    public int[][] getCollideTiles() {
+        return collideTiles;
+    }
+    
+    public boolean isColliding(float x, float y){
+        for (int i = 0; i < collideTiles.length; i++) {
+            for (int j = 0; j < collideTiles[i].length; j++) {
+                if( collideTiles[i][j] == 1) {
+                    if (x > j * 32-1 && x < j * 32 + 33 && y > i * 32-1 && y < i * 32 + 33) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void getImages(String direction, BufferedImage[] image,int size, int count) {
@@ -109,7 +148,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
+        System.out.println("Mouse clicked at: " + e.getX() + ", " + e.getY());
     }
 
     @Override
@@ -139,11 +178,52 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        
+        if(e.getKeyCode() == KeyEvent.VK_F3){
+            debugMode = !debugMode; // Toggle debug mode
+            if (debugMode) {
+                System.out.println("Debug mode enabled");
+            } else {
+                System.out.println("Debug mode disabled");
+            }
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_W) {
+            currentPlayer.yVel = -5; // Move up
+        } else if(e.getKeyCode() == KeyEvent.VK_S) {
+            currentPlayer.yVel = 5; // Move down
+        } else if(e.getKeyCode() == KeyEvent.VK_A) {
+            currentPlayer.xVel = -5; // Move left
+        } else if(e.getKeyCode() == KeyEvent.VK_D) {
+            currentPlayer.xVel = 5; // Move right
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            currentPlayer.speed = 3; // Increase speed
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            currentPlayer.speed = 1; // Decrease speed
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        
+        if(e.getKeyCode() == KeyEvent.VK_W) {
+            currentPlayer.yVel = 0; // Move up
+        } else if(e.getKeyCode() == KeyEvent.VK_S) {
+            currentPlayer.yVel = 0; // Move down
+        } else if(e.getKeyCode() == KeyEvent.VK_A) {
+            currentPlayer.xVel = 0; // Move left
+        } else if(e.getKeyCode() == KeyEvent.VK_D) {
+            currentPlayer.xVel = 0; // Move right
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            currentPlayer.speed = 2; // Decrease speed
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            currentPlayer.speed = 2; // Increase speed
+        }
     }
 }

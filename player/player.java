@@ -36,7 +36,10 @@ public class player{
 
     private attackTemplate attack; // Attack template for player
 
-    public player(worldTemplate currentWorld) {
+    public player(int x, int y,worldTemplate currentWorld) {
+        this.x = x;
+        this.y = y;
+        
         //load idle image
             idleImage = sprite.getImages("player/template/idle/", playerSize);
 
@@ -54,7 +57,7 @@ public class player{
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        attack = new attackTemplate(false, 1, currentWorld);
+        attack = new attackTemplate(false, 1, currentWorld, 10);
     }
 
     public void update() {
@@ -64,9 +67,12 @@ public class player{
         } else {
             maxSpeed = 2; // Normal movement speed
         }
-        // Update player position based on velocity
-        x += (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed;
-        y += (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed;
+        
+        //check that the player isnt colliding with world, if not allow to move
+        if(!currentWorld.isColliding(x+(Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed, y+(Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed)){
+            x += (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed;
+            y += (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed;
+        }
 
         // Ensure player stays within bounds
         if (x < 0){x = 0;}
@@ -121,9 +127,10 @@ public class player{
         
         g.drawImage(img, x-worldXOffset-16, y-worldYOffset-16, null); 
 
-        g.setColor(Color.RED);
-        g.fillArc(x-worldXOffset-6, y-worldYOffset-6, 12, 12, 0, 360);
-
-        // g.drawOval(x-8,y-8,16,16);
+        //show player hit box when in debug mode or in slow mode
+        if(currentWorld.debugMode || speed == 1){
+            g.setColor(Color.RED);
+            g.fillArc(x-worldXOffset-6, y-worldYOffset-6, 12, 12, 0, 360);
+        }
     }
 }

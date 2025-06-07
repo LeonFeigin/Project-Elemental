@@ -7,13 +7,14 @@ public class mainProg {
         JFrame frame = new JFrame("Project Elemental");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setLocation(100, 100);
 
         mainPanel myPanel = new mainPanel();
         myPanel.setPreferredSize(new Dimension(1280, 720));
 
         frame.add(myPanel);
         frame.pack(); // Sizes frame so content is 1280x720
+
+        frame.setLocationRelativeTo(null);
 
         frame.setVisible(true);
     }
