@@ -48,26 +48,35 @@ public class playerTemplate{
     private int lastAttackY;
 
 
-    public playerTemplate(int x, int y,int elementType, worldTemplate currentWorld) {
+    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerName) {
         this.x = x;
         this.y = y;
+        this.attackType = attackType; // Set the attack type for the player
+        this.attackRange = attackRange; // Set the attack range for the player
+        this.attackCooldown = attackCooldown; // Set the attack cooldown for the player
+        this.inbetweenAttackCooldown = inbetweenAttackCooldown; // Set the cooldown between attacks
+        this.attackDamage = attackDamage; // Set the attack damage for the player
+        this.attackSize = attackSize; // Set the size of the attack for the player
+        this.bulletSpeed = bulletSpeed; // Set the speed of the bullets fired by the player
+        this.playerHealth = maxHealth; // Initialize player health to max health
+        this.playerMaxHealth = maxHealth; // Set the maximum health for the player
         this.elementType = elementType; // Set the element type for the player
 
         
         //load idle image
-        idleImage = sprite.getImages("player/template/idle/", playerSize);
+        idleImage = sprite.getImages("player/"+playerName+"/idle/", playerSize);
 
         // load running down images
-        sprite.getImages("player/template/running/down/", runningDownImages, playerSize,4);
+        sprite.getImages("player/"+playerName+"/running/down/", runningDownImages, playerSize,4);
 
         // load running up images
-        sprite.getImages("player/template/running/up/", runningUpImages, playerSize,4);
+        sprite.getImages("player/"+playerName+"/running/up/", runningUpImages, playerSize,4);
 
         // load running left images
-        sprite.getImages("player/template/running/left/", runningLeftImages, playerSize,4);
+        sprite.getImages("player/"+playerName+"/running/left/", runningLeftImages, playerSize,4);
 
         // load running right images
-        sprite.getImages("player/template/running/right/", runningRightImages, playerSize,4);
+        sprite.getImages("player/"+playerName+"/running/right/", runningRightImages, playerSize,4);
         
         this.currentWorld = currentWorld; // Set the current world reference
 

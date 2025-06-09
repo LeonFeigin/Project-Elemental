@@ -6,6 +6,7 @@ import java.awt.RenderingHints.Key;
 import javax.swing.*;
 
 import enemy.enemyTemplate;
+import player.playerFire;
 import player.playerTemplate;
 import ui.mainUI;
 
@@ -44,7 +45,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int worldYOffset = 0;
 
     public playerTemplate currentPlayer;
-
+    
     public ui.mainUI currentUI;
 
     public boolean debugMode = false;

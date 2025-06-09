@@ -5,7 +5,9 @@ import javax.swing.*;
 
 import attack.abilityAttacks;
 import enemy.enemyTemplate;
+import player.playerFire;
 import player.playerTemplate;
+import player.playerWater;
 import ui.mainUI;
 
 import java.awt.event.KeyEvent;
@@ -121,16 +123,15 @@ public class testWorld extends worldTemplate {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    public playerTemplate currentPlayer = new playerTemplate(33,33,abilityAttacks.FIRE_ELEMENT,this);
-
-    // public enemyTemplate currentEnemy = new enemyTemplate(640,260, this);
+    public playerTemplate player1 = new playerWater(33, 33, this);
+    public playerTemplate player2 = new playerFire(33, 33, this);
 
     public testWorld() {
         super();
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
         setCollideTiles(collideTiles);
-        setCurrentPlayer(currentPlayer);
+        setCurrentPlayer(player1);
         currentUI = new mainUI(this);
 
         for (int i = 0; i < 1; i++) {
@@ -169,6 +170,4 @@ public class testWorld extends worldTemplate {
         //draw UI
         currentUI.draw(g);
     }
-
-    
 }
