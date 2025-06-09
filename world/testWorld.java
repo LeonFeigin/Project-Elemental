@@ -3,8 +3,9 @@ package world;
 import java.awt.*;
 import javax.swing.*;
 
+import attack.abilityAttacks;
 import enemy.enemyTemplate;
-import player.player;
+import player.playerTemplate;
 import ui.mainUI;
 
 import java.awt.event.KeyEvent;
@@ -120,9 +121,7 @@ public class testWorld extends worldTemplate {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    public player currentPlayer = new player(33,33,this);
-
-    public ArrayList<enemyTemplate> enemies = new ArrayList<>();
+    public playerTemplate currentPlayer = new playerTemplate(33,33,abilityAttacks.FIRE_ELEMENT,this);
 
     // public enemyTemplate currentEnemy = new enemyTemplate(640,260, this);
 
@@ -136,6 +135,19 @@ public class testWorld extends worldTemplate {
 
         for (int i = 0; i < 1; i++) {
             enemies.add(new enemyTemplate((int)(Math.random() * 100)+500, (int)(Math.random() * 100)+200, this));
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if(currentUI.isInMenu()){
+            currentUI.update();
+            return;
+        }
+        currentPlayer.update();
+        for(int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update();
         }
     }
 
@@ -158,12 +170,5 @@ public class testWorld extends worldTemplate {
         currentUI.draw(g);
     }
 
-    @Override
-    public void update() {
-        super.update();
-        currentPlayer.update();
-        for(enemyTemplate enemy : enemies) {
-            enemy.update();
-        }
-    }
+    
 }

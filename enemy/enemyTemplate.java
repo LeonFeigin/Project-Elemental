@@ -5,57 +5,60 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import attack.abilityAttacks;
 import attack.attackTemplate;
 import world.worldTemplate;
 import player.sprite;
 
 public class enemyTemplate {
-    //Enemy Sprite properties
+    //Enemy positional properties
     public float x = 0;
     public float y = 0;
-
     public float xVel = 0;
     public float yVel = 0;
-
     public float speed = 1; // Speed of the enemy
     public float maxSpeed = 1; // Maximum speed of the enemy
-
-    private int currentFrame = 0;
-    private long lastFrameChangeTime = 0;
-
-    public int enemySize = 32;
-
+    private long lastTimeMoved = System.currentTimeMillis();
+    private int moveCooldown = 1000;
+    
     //Enemy health properties
     public int health = 100;
     public ArrayList<Integer> elementsList = new ArrayList<>();
-    private float bulletSpeed = 1.1f;
+    private ArrayList<BufferedImage> elementsApplied = new ArrayList<>(); // List to hold images of applied elements
+    
 
     private int currentState = 0; // 0 for idle, 1 for running
 
     //enemy attack properties
     public int attackRange = 800; // Range within which the enemy can attack
+    private int attackDamage = 10;
     private int closestPlayerDistance = 200;
     private attackTemplate attack; // Attack template for enemy
-
-    private long lastTimeMoved = System.currentTimeMillis();
-    private int moveCooldown = 1000;
-
     private int playerLastSeenX = 0; // Last known X position of the player
     private int playerLastSeenY = 0; // Last known Y position of the player
+    private float bulletSpeed = 1.1f;
+
+    private int bulletRange = 1000;
+
+    private boolean isActive = true;
 
     worldTemplate currentWorld;
 
+    //Animation properties
     public BufferedImage idleImage;
     private BufferedImage[] runningDownImages = new BufferedImage[4];
     private BufferedImage[] runningUpImages = new BufferedImage[4];
     private BufferedImage[] runningLeftImages = new BufferedImage[4];
     private BufferedImage[] runningRightImages = new BufferedImage[4];
+    private int currentFrame = 0;
+    private long lastFrameChangeTime = 0;
+    public int enemySize = 32;
 
     public enemyTemplate(int x, int y, worldTemplate currentWorld) {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
-        attack = new attackTemplate(true, bulletSpeed, currentWorld, 10); // Initialize attack with enemy properties
+        attack = new attackTemplate(true, bulletSpeed, currentWorld, attackDamage, bulletRange); // Initialize attack with enemy properties
 
         idleImage = sprite.getImages("enemy/template/idle/", enemySize);
         sprite.getImages("enemy/template/running/down/", runningDownImages, enemySize, 4);
@@ -68,22 +71,28 @@ public class enemyTemplate {
         health -= damage;
         if (health <= 0) {
             health = 0; // Ensure health does not go below zero
-            // Handle enemy death logic here, e.g., remove from world
+            isActive = false; // Set enemy to inactive when health reaches zero
         }
     } 
 
     public void applyElement(int element) {
         if (!elementsList.contains(element)) {
             elementsList.add(element); // Add the element to the list if not already present
+            elementsApplied.add(abilityAttacks.getElementImage(element)); // Add the corresponding image to the applied elements list
         }
     }
 
     public void resetElements() {
-        elementsList.removeAll(elementsList); // Clear all elements
+        elementsList.clear(); // Clear all elements
+        elementsApplied.clear(); // Clear the list of applied element images
     }
 
     public ArrayList<Integer> getElementsList() {
         return elementsList; // Return the list of elements
+    }
+
+    public boolean isActive() {
+        return isActive; // Return whether the enemy is active
     }
 
     public void update() {
@@ -91,6 +100,23 @@ public class enemyTemplate {
         long currentTime = System.currentTimeMillis();
 
         attack.update(); // Update attack state and bullets
+
+        if(!isActive) {
+            //only remvoe the enemy once all of its bullets are gone
+            if(attack.getBullets().size() <= 0) {
+                currentWorld.getEnemies().remove(this); // Remove the enemy from the world if health is zero
+            }
+            return; // If the enemy is not active, skip the update
+        }
+
+        //animation logic
+        if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {
+            lastFrameChangeTime = System.currentTimeMillis();
+            currentFrame++;
+        }
+        if (currentFrame >= 4) {
+            currentFrame = 0;
+        }
 
         // Update current state based on velocity
         if (xVel != 0 || yVel != 0) {
@@ -129,7 +155,7 @@ public class enemyTemplate {
         }
 
         if(attack.isActive()){
-            attack.attack(3, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
+            attack.attack(1, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
         }
 
         //check if player is within attack range
@@ -151,19 +177,12 @@ public class enemyTemplate {
                 }
                 playerLastSeenX = playerX; // Update last seen position
                 playerLastSeenY = playerY; // Update last seen position
-                attack.attack(3, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
+                attack.attack(1, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
             }
         }
     }
 
     public void draw(Graphics g, int worldXOffset, int worldYOffset ) {
-        if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {
-            lastFrameChangeTime = System.currentTimeMillis();
-            currentFrame++;
-        }
-        if (currentFrame >= 4) {
-            currentFrame = 0;
-        }
         BufferedImage img = idleImage; // Assuming idleImage is set
         if (!attack.isActive()) {
             if(yVel > 0){
@@ -185,15 +204,33 @@ public class enemyTemplate {
             g.setColor(Color.RED);
             //show until where the enemy will approch the player
             g.drawOval((int)x - worldXOffset + enemySize / 2 - closestPlayerDistance/2, (int)y - worldYOffset + enemySize / 2 - closestPlayerDistance/2, closestPlayerDistance, closestPlayerDistance);
+            //show the enemy hitbox
+            g.setColor(Color.RED);
+            g.drawRect((int)x - worldXOffset, (int)y - worldYOffset, enemySize, enemySize);
         }
         
-        g.drawImage(img, (int)x-worldXOffset, (int)y-worldYOffset, null); 
+        //only draw the enemy if it is active
+        if(isActive){
+            //enemy itself
+            g.drawImage(img, (int)x-worldXOffset, (int)y-worldYOffset, null); 
+
+            //health bar
+            g.setColor(Color.BLACK);
+            g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,36, 8,3,12);
+            g.setColor(Color.RED);
+            g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,(int)(36*(health/100.0)) , 8,3,12);
+
+            // Draw the elements applied to the enemy
+            for (int i = 0; i < elementsApplied.size(); i++) {
+                BufferedImage elementImage = elementsApplied.get(i);
+                if (elementImage != null) {
+                    g.drawImage(elementImage, (int)x - worldXOffset + i * 16, (int)y - worldYOffset - 32, null);
+                }
+            }
+        }
 
         attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
-        g.setColor(Color.BLACK);
-        g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,36, 8,3,12);
-        g.setColor(Color.RED);
-        g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,(int)(36*(health/100.0)) , 8,3,12);
+        
     }
 
 }

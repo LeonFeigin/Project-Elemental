@@ -1,6 +1,8 @@
 package attack;
 
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import player.sprite;
 
 public class abilityAttacks {
     public static final int NO_ELEMENT = 0;
@@ -9,6 +11,25 @@ public class abilityAttacks {
     public static final int EARTH_ELEMENT = 3;
     public static final int ICE_ELEMENT = 4;
     public static final int LIGHTNING_ELEMENT = 5;
+
+    
+    // Get the image for the specified element
+    public static BufferedImage getElementImage(int element) {
+        switch (element) {
+            case FIRE_ELEMENT:
+                return sprite.getImages("attack/elementsImages/fire/", 16);
+            case WATER_ELEMENT:
+                return sprite.getImages("attack/elementsImages/water/", 16);
+            case EARTH_ELEMENT:
+                return sprite.getImages("attack/elementsImages/earth/", 16);
+            case ICE_ELEMENT:
+                return sprite.getImages("attack/elementsImages/ice/", 16);
+            case LIGHTNING_ELEMENT:
+                return sprite.getImages("attack/elementsImages/lightning/", 16);
+            default:
+                return null; // No element or unknown element
+        }
+    }
 
     // Elemental interactions and their damage multipliers
     public static int getDamageMultiplier(int initDamage, ArrayList<Integer> elementsList, int applyingElement) { 

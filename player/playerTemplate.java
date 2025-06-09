@@ -7,60 +7,111 @@ import java.awt.image.BufferedImage;
 import attack.attackTemplate;
 import world.worldTemplate;
 
-public class player{
+public class playerTemplate{
+    //Player positional properties
     public int x = 0;
     public int y = 0;
-
     public int xVel = 0;
     public int yVel = 0;
-
     public float speed = 2  ; // Speed of the player
     public float maxSpeed = 2; // Maximum speed of the player
-
-    public int playerSize = 32;
-
-    private int currentFrame = 0;
-    private long lastFrameChangeTime = 0;
-
+    
+    //Player health properties
     private int playerHealth = 100; // Player health
+    private int playerMaxHealth = 100; // Player max health
 
+    //Animation properties
     private BufferedImage idleImage;
     private BufferedImage[] runningDownImages = new BufferedImage[4];
     private BufferedImage[] runningUpImages = new BufferedImage[4];
     private BufferedImage[] runningLeftImages = new BufferedImage[4];
     private BufferedImage[] runningRightImages = new BufferedImage[4];
-    
+    private int currentFrame = 0;
+    private long lastFrameChangeTime = 0;
     private int currentState = 0; // 0 for idle, 1 for running
+    public int playerSize = 32;
 
+    //World properties
     private worldTemplate currentWorld;
 
+    //Attack properties
     private attackTemplate attack; // Attack template for player
+    private int attackType = 0;
+    private int elementType = 0; // Type of the element applied to the player 
+    private int attackDamage = 10; // Damage dealt by the player's attack
+    private int attackRange = 100; // Range of the player's attack
+    private int attackCooldown = 500; // Cooldown time for the player's attack in milliseconds
+    private int inbetweenAttackCooldown = 100; // Cooldown time between attacks in milliseconds
+    private int attackSize = 5; //how many bullets the player can shoot at once
+    private int bulletSpeed = 1;
+    private int lastAttackX;
+    private int lastAttackY;
 
-    public player(int x, int y,worldTemplate currentWorld) {
+
+    public playerTemplate(int x, int y,int elementType, worldTemplate currentWorld) {
         this.x = x;
         this.y = y;
+        this.elementType = elementType; // Set the element type for the player
+
         
         //load idle image
-            idleImage = sprite.getImages("player/template/idle/", playerSize);
+        idleImage = sprite.getImages("player/template/idle/", playerSize);
 
-            // load running down images
-            sprite.getImages("player/template/running/down/", runningDownImages, playerSize,4);
+        // load running down images
+        sprite.getImages("player/template/running/down/", runningDownImages, playerSize,4);
 
-            // load running up images
-            sprite.getImages("player/template/running/up/", runningUpImages, playerSize,4);
+        // load running up images
+        sprite.getImages("player/template/running/up/", runningUpImages, playerSize,4);
 
-            // load running left images
-            sprite.getImages("player/template/running/left/", runningLeftImages, playerSize,4);
+        // load running left images
+        sprite.getImages("player/template/running/left/", runningLeftImages, playerSize,4);
 
-            // load running right images
-            sprite.getImages("player/template/running/right/", runningRightImages, playerSize,4);
+        // load running right images
+        sprite.getImages("player/template/running/right/", runningRightImages, playerSize,4);
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        attack = new attackTemplate(false, 1, currentWorld, 10);
+        attack = new attackTemplate(false, bulletSpeed, currentWorld, attackDamage, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
+    }
+    
+    public void takeDamage(int damage) {
+        playerHealth -= damage;
+        if (playerHealth < 0) {
+            playerHealth = 0; // Ensure health doesn't go below 0
+        }
+    }
+
+    public int getHealth() {
+        return playerHealth;
+    }
+
+    public int getMaxHealth() {
+        return playerMaxHealth;
+    }
+
+    public void attack(int targetX, int targetY) {
+        if(!attack.isActive()) {
+            lastAttackX = targetX;
+            lastAttackY = targetY;
+            attack.attack(attackType, x, y, lastAttackX, lastAttackY, elementType);
+        }
     }
 
     public void update() {
+        attack.update(); // Update attack state and bullets
+        if(attack.isActive()) {
+            attack.attack(attackType, x, y, lastAttackX, lastAttackY, elementType);
+        }
+
+        //animation logic
+        if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {
+            lastFrameChangeTime = System.currentTimeMillis();
+            currentFrame++;
+        }
+        if (currentFrame >= 4) {
+            currentFrame = 0;
+        }
+
         //slow down if player moving x and y at the same time
         if (xVel != 0 && yVel != 0) {
             maxSpeed = 1.4f; // Diagonal movement speed
@@ -98,22 +149,7 @@ public class player{
         currentWorld.worldYOffset = Math.min(Math.max(y - 360, 0), Math.max(currentWorld.getWorldHeight()-720,0)); // Center camera on player
     }
     
-    public void takeDamage(int damage) {
-        playerHealth -= damage;
-    }
-
-    public int getHealth() {
-        return playerHealth;
-    }
-    
     public void draw(Graphics g,int worldXOffset, int worldYOffset) {
-        if(System.currentTimeMillis() - lastFrameChangeTime > 100 && currentState == 1) {
-            lastFrameChangeTime = System.currentTimeMillis();
-            currentFrame++;
-        }
-        if (currentFrame >= 4) {
-            currentFrame = 0;
-        }
         BufferedImage img = idleImage; // Assuming idleImage is set
         if(yVel > 0){
             img = runningDownImages[currentFrame];
@@ -126,6 +162,8 @@ public class player{
         }
         
         g.drawImage(img, x-worldXOffset-16, y-worldYOffset-16, null); 
+
+        attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
 
         //show player hit box when in debug mode or in slow mode
         if(currentWorld.debugMode || speed == 1){

@@ -2,8 +2,6 @@ package attack;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-
-import player.player;
 import world.worldTemplate;
 
 public class attackTemplate {
@@ -25,19 +23,40 @@ public class attackTemplate {
     private long attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
     private int inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
     private int leftAmountOfShooting = 2;
+    private int defaultLeftAmountOfShooting = 2; // Default amount of shooting left
 
     private float speed = 1; // Speed of the bullets fired by the attack
 
     private int currentAngle = 0; //used for attack type 3 & 4
 
-    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int damageAmount) {
+    //enemy constructor
+    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int damageAmount, int attackRange) {
         this.damageAmount = damageAmount; // Set the damage amount for the attack
         this.isEnemyAttack = isEnemyAttack;
         this.currentWorld = world; // Set the current world reference
+        this.speed = speed; // Set the speed of the bullets fired by the attack
+        this.attackRange = attackRange; // Set the range of the attack
+        defaultLeftAmountOfShooting = 2; // Set the default amount of shooting left
+    }
+
+    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int damageAmount, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting) {
+        this.damageAmount = damageAmount; // Set the damage amount for the attack
+        this.isEnemyAttack = isEnemyAttack;
+        this.currentWorld = world; // Set the current world reference
+        this.speed = speed; // Set the speed of the bullets fired by the attack
+        this.attackRange = attackRange; // Set the range of the attack
+        this.attackCooldown = attackCooldown; // Set the cooldown time for the attack
+        this.inbetweenAttackCooldown = inbetweenAttackCooldown; // Set the cooldown time between each bullet fired
+        this.defaultLeftAmountOfShooting = defaultLeftAmountOfShooting; // Set the amount of shooting left
+        this.leftAmountOfShooting = defaultLeftAmountOfShooting; // Initialize the amount of shooting left
     }
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public ArrayList<bullet> getBullets() {
+        return bullets; // Return the list of bullets fired by the attack
     }
 
     public void attack(int attackType, int initX, int initY, int targetX, int targetY) {
@@ -49,7 +68,7 @@ public class attackTemplate {
             lastTimeFired = System.currentTimeMillis(); // Update the last time fired
 
         }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
-            leftAmountOfShooting = 2; // Reset the amount of shooting left
+            leftAmountOfShooting = defaultLeftAmountOfShooting; // Reset the amount of shooting left
         }
     }
 
@@ -62,7 +81,7 @@ public class attackTemplate {
             lastTimeFired = System.currentTimeMillis(); // Update the last time fired
 
         }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
-            leftAmountOfShooting = 2; // Reset the amount of shooting left
+            leftAmountOfShooting = defaultLeftAmountOfShooting; // Reset the amount of shooting left
         }
     }
 
@@ -80,37 +99,43 @@ public class attackTemplate {
         if(attackType == 0){// single shot attack
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                leftAmountOfShooting = 4; // Reset the amount of shooting left
-                attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
-                inbetweenAttackCooldown = 150; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                if(isEnemy) {
+                    leftAmountOfShooting = 4; // Reset the amount of shooting left
+                    attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
+                    inbetweenAttackCooldown = 150; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                }
             }
             double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY) * Math.sin(angle) + initX;
             double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY) * Math.cos(angle) + initY;
 
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
             bullets.add(newBullet);
 
         }else if(attackType == 1){ // triple shot attack
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                leftAmountOfShooting = 2; // Reset the amount of shooting left
-                attackCooldown = 500; // Cooldown time for the attack in milliseconds (1 second)
-                inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                if(isEnemy) {
+                    leftAmountOfShooting = 2; // Reset the amount of shooting left
+                    attackCooldown = 500; // Cooldown time for the attack in milliseconds (1 second)
+                    inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                }
             }
             for (int i = -1; i < 2; i++) {
                 double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY+10*i) * Math.sin(angle) + initX;
                 double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY+10*i) * Math.cos(angle) + initY;
 
                 // System.out.println(newTargetX);
-                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, elementType);
+                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
                 bullets.add(newBullet);
             }
         }else if(attackType == 2){ // around the object
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                leftAmountOfShooting = 90; // Reset the amount of shooting left
-                attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
-                inbetweenAttackCooldown = 25; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                if(isEnemy) {
+                    leftAmountOfShooting = 90; // Reset the amount of shooting left
+                    attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
+                    inbetweenAttackCooldown = 25; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                }
             }
 
             double newInitX = (initX - initX+32) * Math.cos(Math.toRadians(currentAngle)) - (initY - initY) * Math.sin(Math.toRadians(currentAngle)) + initX;
@@ -126,16 +151,17 @@ public class attackTemplate {
             vx = dx / length;
             vy = dy / length;
 
-            // System.out.println(newTargetX);
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle+=4;
         }else if(attackType == 3){ // fihal boss
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                leftAmountOfShooting = 360; // Reset the amount of shooting left
-                attackCooldown = 10000; // Cooldown time for the attack in milliseconds (1 second)
-                inbetweenAttackCooldown = 10; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                if(isEnemy){
+                    leftAmountOfShooting = 360; // Reset the amount of shooting left
+                    attackCooldown = 10000; // Cooldown time for the attack in milliseconds (1 second)
+                    inbetweenAttackCooldown = 10; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                }
             }
 
             double newInitX = (initX - initX+32) * Math.cos(Math.toRadians(currentAngle)) - (initY - initY) * Math.sin(Math.toRadians(currentAngle)) + initX;
@@ -152,7 +178,7 @@ public class attackTemplate {
             vy = dy / length;
 
             // System.out.println(newTargetX);
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle++;
         }

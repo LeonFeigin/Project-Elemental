@@ -28,9 +28,18 @@ public class bullet{
 
     int bulletElementType; // Element type of the bullet
 
-    public bullet(int startX, int startY, float vx, float vy, float speed, boolean isEnemy, worldTemplate world, attackTemplate attackParent,int damageAmount, int bulletElementType) {
+    int bulletSize = 12; // Size of the bullet image
+
+    int bulletRange;
+
+    int initX; // Initial X position of the bullet
+    int initY; // Initial Y position of the bullet
+
+    public bullet(int startX, int startY, float vx, float vy, float speed, boolean isEnemy, worldTemplate world, attackTemplate attackParent, int damageAmount, int bulletRange, int bulletElementType) {
         this.x = startX;
         this.y = startY;
+        this.initX = startX; // Set the initial X position
+        this.initY = startY; // Set the initial Y position
         this.vx = vx;
         this.vy = vy;
         this.speed = speed;
@@ -38,9 +47,10 @@ public class bullet{
         this.isEnemy = isEnemy;
         this.attackParent = attackParent;
         this.damageAmount = damageAmount; // Set the damage amount
+        this.bulletRange = bulletRange; // Set the range of the bullet
         this.bulletElementType = bulletElementType;
 
-        bulletImage = sprite.getImages("attack/bulletImage/", 12);
+        bulletImage = sprite.getImages("attack/bulletImage/", bulletSize); // Load the bullet image
     }
 
     public void update() {
@@ -57,17 +67,18 @@ public class bullet{
             }
         }else{
             for (enemyTemplate enemy : currentWorld.getEnemies()) {
-                float distanceToEnemy = (float)Math.sqrt(Math.pow(x - currentWorld.currentPlayer.x, 2) + Math.pow(y - currentWorld.currentPlayer.y, 2));
-                if(distanceToEnemy < 6) {
-                    int damage = abilityAttacks.getDamageMultiplier(10, enemy.getElementsList(), bulletElementType);
-                    enemy.takeDamage(damage); // Deal damage to the enemy
-                    if(damageAmount != damage){
-                        enemy.resetElements();
-                    }else{
-                        enemy.applyElement(bulletElementType); // Add the element type to the enemy
+                if(enemy.isActive()) { // Check if the bullet collides with an active enemy
+                    if(x+bulletSize/2 > enemy.x && x-bulletSize/2 < enemy.x + enemy.enemySize && y+bulletSize/2 > enemy.y && y-bulletSize/2 < enemy.y + enemy.enemySize) {
+                        int damage = abilityAttacks.getDamageMultiplier(10, enemy.getElementsList(), bulletElementType);
+                        enemy.takeDamage(damage); // Deal damage to the enemy
+                        if(damageAmount != damage){
+                            enemy.resetElements();
+                        }else{
+                            enemy.applyElement(bulletElementType); // Add the element type to the enemy
+                        }
+                        attackParent.removeBullet(this); // Remove the bullet after hitting the enemy
+                        return;
                     }
-                    attackParent.removeBullet(this); // Remove the bullet after hitting the enemy
-                    return;
                 }
             }
         }
@@ -83,6 +94,11 @@ public class bullet{
                     }
                 }
             }
+        }
+
+        //check if bullet is out of range
+        if (Math.sqrt(Math.pow(x - initX, 2) + Math.pow(y - initY, 2)) > bulletRange) {
+            attackParent.removeBullet(this); // Remove the bullet if it exceeds its range
         }
     }
 

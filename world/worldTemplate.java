@@ -6,7 +6,8 @@ import java.awt.RenderingHints.Key;
 import javax.swing.*;
 
 import enemy.enemyTemplate;
-import player.player;
+import player.playerTemplate;
+import ui.mainUI;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -42,13 +43,18 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int worldXOffset = 0;
     public int worldYOffset = 0;
 
-    public player currentPlayer;
+    public playerTemplate currentPlayer;
 
     public ui.mainUI currentUI;
 
     public boolean debugMode = false;
 
     public ArrayList<enemyTemplate> enemies = new ArrayList<>();
+
+    private boolean AisPressed = false;
+    private boolean DisPressed = false;
+    private boolean WisPressed = false;
+    private boolean SisPressed = false;
 
     public worldTemplate() {
         //get grass tiles
@@ -81,7 +87,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         this.collideTiles = newWorld;
     }
 
-    public void setCurrentPlayer(player player) {
+    public void setCurrentPlayer(playerTemplate player) {
         this.currentPlayer = player;
     }
 
@@ -122,7 +128,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     }
 
     public void update() {
-        
+        if(currentUI.isInMenu()){
+            return;
+        }
+        currentUI.update(); // Update the UI
     }
 
     public void paintComponent(Graphics g) {
@@ -148,7 +157,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Mouse clicked at: " + e.getX() + ", " + e.getY());
+        
     }
 
     @Override
@@ -158,7 +167,15 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
+        if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
+            currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
+            System.out.println("Menu toggled: " + currentUI.isInMenu());
+            return;
+        }
+        if(!currentUI.isInMenu()){
+            currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+        }
+        
     }
 
     @Override
@@ -178,6 +195,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0); // Exit the game
+        }
+
         if(e.getKeyCode() == KeyEvent.VK_F3){
             debugMode = !debugMode; // Toggle debug mode
             if (debugMode) {
@@ -187,35 +208,61 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             }
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_W) {
-            currentPlayer.yVel = -5; // Move up
-        } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            currentPlayer.yVel = 5; // Move down
-        } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            currentPlayer.xVel = -5; // Move left
-        } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            currentPlayer.xVel = 5; // Move right
-        }
+        if(!currentUI.isInMenu()) {
+            if(e.getKeyCode() == KeyEvent.VK_W) {
+                currentPlayer.yVel = -5; // Move up
+                WisPressed = true; // Set W key as pressed
+            } else if(e.getKeyCode() == KeyEvent.VK_S) {
+                currentPlayer.yVel = 5; // Move down
+                SisPressed = true; // Set S key as pressed
+            } else if(e.getKeyCode() == KeyEvent.VK_A) {
+                currentPlayer.xVel = -5; // Move left
+                AisPressed = true; // Set A key as pressed
+            } else if(e.getKeyCode() == KeyEvent.VK_D) {
+                currentPlayer.xVel = 5; // Move right
+                DisPressed = true; // Set D key as pressed
+            }
 
-        if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentPlayer.speed = 3; // Increase speed
-        }
+            if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                currentPlayer.speed = 3; // Increase speed
+            }
 
-        if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
-            currentPlayer.speed = 1; // Decrease speed
+            if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+                currentPlayer.speed = 1; // Decrease speed
+            }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_W) {
-            currentPlayer.yVel = 0; // Move up
+            if(SisPressed) {
+                currentPlayer.yVel = 5; // If S is pressed, move down
+            } else {
+                currentPlayer.yVel = 0; // Stop moving up
+            }
+            WisPressed = false; // Reset W key pressed state
         } else if(e.getKeyCode() == KeyEvent.VK_S) {
-            currentPlayer.yVel = 0; // Move down
+            if(WisPressed) {
+                currentPlayer.yVel = -5; // If S is pressed, move down
+            } else {
+                currentPlayer.yVel = 0; // Stop moving up
+            }
+            SisPressed = false; // Reset S key pressed state
         } else if(e.getKeyCode() == KeyEvent.VK_A) {
-            currentPlayer.xVel = 0; // Move left
+            if(DisPressed) {
+                currentPlayer.xVel = 5; // If S is pressed, move down
+            } else {
+                currentPlayer.xVel = 0; // Stop moving up
+            }
+            AisPressed = false; // Reset A key pressed state
         } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            currentPlayer.xVel = 0; // Move right
+            if(AisPressed) {
+                currentPlayer.xVel = -5; // If S is pressed, move down
+            } else {
+                currentPlayer.xVel = 0; // Stop moving up
+            }
+            DisPressed = false; // Reset D key pressed state
         }
 
         if(e.getKeyCode() == KeyEvent.VK_SHIFT) {

@@ -1,5 +1,5 @@
 import javax.swing.JFrame;
-
+import javax.swing.JPanel;
 import java.awt.Dimension;
 
 public class mainProg {
@@ -8,7 +8,7 @@ public class mainProg {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
-        mainPanel myPanel = new mainPanel();
+        mainPanel2 myPanel = new mainPanel2();
         myPanel.setPreferredSize(new Dimension(1280, 720));
 
         frame.add(myPanel);
