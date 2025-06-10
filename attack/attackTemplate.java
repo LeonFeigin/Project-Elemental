@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import world.worldTemplate;
 
 public class attackTemplate {
-    
-    private int damageAmount = 0; // Type of the attack (0 for triple shot, etc.)
 
     private int attackRange = 100; // Range of the attack
     
@@ -30,8 +28,7 @@ public class attackTemplate {
     private int currentAngle = 0; //used for attack type 3 & 4
 
     //enemy constructor
-    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int damageAmount, int attackRange) {
-        this.damageAmount = damageAmount; // Set the damage amount for the attack
+    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange) {
         this.isEnemyAttack = isEnemyAttack;
         this.currentWorld = world; // Set the current world reference
         this.speed = speed; // Set the speed of the bullets fired by the attack
@@ -39,8 +36,7 @@ public class attackTemplate {
         defaultLeftAmountOfShooting = 2; // Set the default amount of shooting left
     }
 
-    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int damageAmount, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting) {
-        this.damageAmount = damageAmount; // Set the damage amount for the attack
+    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting) {
         this.isEnemyAttack = isEnemyAttack;
         this.currentWorld = world; // Set the current world reference
         this.speed = speed; // Set the speed of the bullets fired by the attack
@@ -59,12 +55,12 @@ public class attackTemplate {
         return bullets; // Return the list of bullets fired by the attack
     }
 
-    public void attack(int attackType, int initX, int initY, int targetX, int targetY) {
+    public void attack(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY) {
 
         if(System.currentTimeMillis() - lastTimeFired > inbetweenAttackCooldown && leftAmountOfShooting > 0) {
 
             leftAmountOfShooting--; // Decrease the amount of shooting left
-            attack(attackType, initX, initY, targetX, targetY, isEnemyAttack, abilityAttacks.NO_ELEMENT); // Call the attack method to fire bullets
+            attack(attackType,  attackDamage, initX, initY, targetX, targetY, isEnemyAttack, abilityAttacks.NO_ELEMENT); // Call the attack method to fire bullets
             lastTimeFired = System.currentTimeMillis(); // Update the last time fired
 
         }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
@@ -72,12 +68,12 @@ public class attackTemplate {
         }
     }
 
-    public void attack(int attackType, int initX, int initY, int targetX, int targetY, int elementType) {
+    public void attack(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY, int elementType) {
 
         if(System.currentTimeMillis() - lastTimeFired > inbetweenAttackCooldown && leftAmountOfShooting > 0) {
 
             leftAmountOfShooting--; // Decrease the amount of shooting left
-            attack(attackType, initX, initY, targetX, targetY, isEnemyAttack, elementType); // Call the attack method to fire bullets
+            attack(attackType, attackDamage, initX, initY, targetX, targetY, isEnemyAttack, elementType); // Call the attack method to fire bullets
             lastTimeFired = System.currentTimeMillis(); // Update the last time fired
 
         }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
@@ -85,7 +81,7 @@ public class attackTemplate {
         }
     }
 
-    private void attack(int attackType, int initX, int initY, int targetX, int targetY, boolean isEnemy, int elementType) { // atatck method for firing bullets
+    private void attack(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY, boolean isEnemy, int elementType) { // atatck method for firing bullets
         double angle = Math.atan2(targetY-initY,targetX-initX);
         
         float dx = targetX - initX;
@@ -108,7 +104,7 @@ public class attackTemplate {
             double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY) * Math.sin(angle) + initX;
             double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY) * Math.cos(angle) + initY;
 
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
             bullets.add(newBullet);
 
         }else if(attackType == 1){ // triple shot attack
@@ -125,7 +121,7 @@ public class attackTemplate {
                 double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY+10*i) * Math.cos(angle) + initY;
 
                 // System.out.println(newTargetX);
-                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
+                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
                 bullets.add(newBullet);
             }
         }else if(attackType == 2){ // around the object
@@ -151,7 +147,7 @@ public class attackTemplate {
             vx = dx / length;
             vy = dy / length;
 
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle+=4;
         }else if(attackType == 3){ // fihal boss
@@ -178,9 +174,24 @@ public class attackTemplate {
             vy = dy / length;
 
             // System.out.println(newTargetX);
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, damageAmount, attackRange, elementType);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle++;
+        }else if(attackType == 4){ // single bullet
+            if(!isActive){
+                isActive = true; // Mark the attack as active
+                if(isEnemy) {
+                    leftAmountOfShooting = 2; // Reset the amount of shooting left
+                    attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
+                    inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                }
+            }
+            double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY) * Math.sin(angle) + initX;
+            double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY) * Math.cos(angle) + initY;
+
+            // System.out.println(newTargetX);
+            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
+            bullets.add(newBullet);
         }
     }
 

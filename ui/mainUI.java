@@ -18,6 +18,8 @@ public class mainUI {
 
     private int delayedPlayerHealth; // For delayed health updates
 
+    
+
     private BufferedImage[] healthBarImages = new BufferedImage[3]; // 0 = background, 1 = red bar (health)
     private BufferedImage baseBackground;
     private BufferedImage[] icons = new BufferedImage[8];
@@ -65,6 +67,7 @@ public class mainUI {
 
     public void draw(Graphics g){
         drawHealthBar(g, 90, 20);
+        drawPlayerSelection(g,40, 160);
 
         // Draw the base background
         g.drawImage(baseBackground, 20, 20, null);
@@ -75,6 +78,35 @@ public class mainUI {
         //all debugging information
         if(currentWorld.debugMode){
             drawDebug(g);
+        }
+    }
+
+    public void drawPlayerSelection(Graphics g, int x, int y) {
+        for (int i = 0; i < 4; i++) {
+            BufferedImage playerImage = null;
+            switch(currentWorld.playerSwitch.currentPlayerSelection[i]){
+                case(0):
+                    playerImage = sprite.getImages("player/playerFireSprites/idle/", 32);
+                    break;
+                case(1):
+                    playerImage = sprite.getImages("player/playerWaterSprites/idle/", 32);
+                    break;
+                case(2):
+                    playerImage = sprite.getImages("player/playerEarthSprites/idle/", 32);
+                    break;
+                case(3):
+                    playerImage = sprite.getImages("player/playerIceSprites/idle/", 32);
+                    break;
+            }
+
+            g.setColor(Color.black);
+            g.drawOval(x, y+100*i, 75, 75);
+
+            if(playerImage != null){
+                g.drawImage(playerImage, (int)(x-16+75/2f), (int)(y+100*i-16+75/2f), null);
+            }
+            g.setColor(new Color(0,0,0,100));
+            g.fillArc(x, y+100*i, 75, 75,0,(int)(360*(currentWorld.playerSwitch.timeRemaining()/currentWorld.playerSwitch.coolddown)));
         }
     }
 

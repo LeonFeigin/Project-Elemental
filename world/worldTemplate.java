@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import enemy.enemyTemplate;
 import player.playerFire;
+import player.playerSwitch;
 import player.playerTemplate;
 import ui.mainUI;
 
@@ -45,7 +46,9 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int worldYOffset = 0;
 
     public playerTemplate currentPlayer;
-    
+
+    public playerSwitch playerSwitch;
+
     public ui.mainUI currentUI;
 
     public boolean debugMode = false;
@@ -61,6 +64,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         //get grass tiles
         getImages("world/tileset/grass/", grassTiles, 32, 77);
         getImages("world/tileset/path/", pathTiles, 32, 77);
+        playerSwitch = new playerSwitch(this);
     }
 
     public int getWorldWidth() {
@@ -210,6 +214,12 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         }
 
         if(!currentUI.isInMenu()) {
+            if(e.getKeyCode() >= '1' && e.getKeyCode() <= '4') {
+                int playerType = e.getKeyCode() - '1'   ; // Convert key code to player type (1-5)
+                playerSwitch.switchPlayer(playerType); // Switch player based on key pressed
+                System.out.println("Switched to player type: " + playerType);
+            }
+
             if(e.getKeyCode() == KeyEvent.VK_W) {
                 currentPlayer.yVel = -5; // Move up
                 WisPressed = true; // Set W key as pressed

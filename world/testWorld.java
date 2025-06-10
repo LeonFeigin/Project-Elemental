@@ -123,8 +123,8 @@ public class testWorld extends worldTemplate {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    public playerTemplate player1 = new playerWater(33, 33, this);
-    public playerTemplate player2 = new playerFire(33, 33, this);
+    public playerTemplate player1 = new playerWater(160, 160, this);
+    public playerTemplate player2 = new playerFire(160, 160, this);
 
     public testWorld() {
         super();

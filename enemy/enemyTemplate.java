@@ -30,6 +30,7 @@ public class enemyTemplate {
     private int currentState = 0; // 0 for idle, 1 for running
 
     //enemy attack properties
+    private int attackType = 0;
     public int attackRange = 800; // Range within which the enemy can attack
     private int attackDamage = 10;
     private int closestPlayerDistance = 200;
@@ -58,7 +59,7 @@ public class enemyTemplate {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
-        attack = new attackTemplate(true, bulletSpeed, currentWorld, attackDamage, bulletRange); // Initialize attack with enemy properties
+        attack = new attackTemplate(true, bulletSpeed, currentWorld, bulletRange); // Initialize attack with enemy properties
 
         idleImage = sprite.getImages("enemy/template/idle/", enemySize);
         sprite.getImages("enemy/template/running/down/", runningDownImages, enemySize, 4);
@@ -155,7 +156,7 @@ public class enemyTemplate {
         }
 
         if(attack.isActive()){
-            attack.attack(1, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
+            attack.attack(attackType, attackDamage, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
         }
 
         //check if player is within attack range
@@ -177,7 +178,7 @@ public class enemyTemplate {
                 }
                 playerLastSeenX = playerX; // Update last seen position
                 playerLastSeenY = playerY; // Update last seen position
-                attack.attack(1, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
+                attack.attack(attackType, attackDamage, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
             }
         }
     }

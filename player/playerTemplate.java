@@ -61,7 +61,6 @@ public class playerTemplate{
         this.playerHealth = maxHealth; // Initialize player health to max health
         this.playerMaxHealth = maxHealth; // Set the maximum health for the player
         this.elementType = elementType; // Set the element type for the player
-
         
         //load idle image
         idleImage = sprite.getImages("player/"+playerName+"/idle/", playerSize);
@@ -80,7 +79,7 @@ public class playerTemplate{
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        attack = new attackTemplate(false, bulletSpeed, currentWorld, attackDamage, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
+        attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
     }
     
     public void takeDamage(int damage) {
@@ -102,14 +101,15 @@ public class playerTemplate{
         if(!attack.isActive()) {
             lastAttackX = targetX;
             lastAttackY = targetY;
-            attack.attack(attackType, x, y, lastAttackX, lastAttackY, elementType);
+            attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
+            System.out.println(attackDamage);
         }
     }
 
     public void update() {
         attack.update(); // Update attack state and bullets
         if(attack.isActive()) {
-            attack.attack(attackType, x, y, lastAttackX, lastAttackY, elementType);
+            attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
         }
 
         //animation logic

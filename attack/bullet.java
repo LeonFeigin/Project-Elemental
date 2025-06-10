@@ -62,14 +62,14 @@ public class bullet{
         if(isEnemy){
             float distanceToPlayer = (float)Math.sqrt(Math.pow(x - currentWorld.currentPlayer.x, 2) + Math.pow(y - currentWorld.currentPlayer.y, 2));
             if(distanceToPlayer < 6) {
-                currentWorld.currentPlayer.takeDamage(10); // Deal damage to the player
+                currentWorld.currentPlayer.takeDamage(damageAmount); // Deal damage to the player
                 attackParent.removeBullet(this);
             }
         }else{
             for (enemyTemplate enemy : currentWorld.getEnemies()) {
                 if(enemy.isActive()) { // Check if the bullet collides with an active enemy
                     if(x+bulletSize/2 > enemy.x && x-bulletSize/2 < enemy.x + enemy.enemySize && y+bulletSize/2 > enemy.y && y-bulletSize/2 < enemy.y + enemy.enemySize) {
-                        int damage = abilityAttacks.getDamageMultiplier(10, enemy.getElementsList(), bulletElementType);
+                        int damage = abilityAttacks.getDamageMultiplier(damageAmount, enemy.getElementsList(), bulletElementType);
                         enemy.takeDamage(damage); // Deal damage to the enemy
                         if(damageAmount != damage){
                             enemy.resetElements();
