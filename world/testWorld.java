@@ -124,7 +124,7 @@ public class testWorld extends worldTemplate {
     };
 
     public testWorld() {
-        super();
+        super(grassTilesWorld, pathTilesWorld, collideTiles);
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
         setCollideTiles(collideTiles);
@@ -139,28 +139,14 @@ public class testWorld extends worldTemplate {
     @Override
     public void update() {
         super.update();
-        if(currentUI.isInMenu()){
-            currentUI.update();
-            return;
-        }
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        drawTiles(g, grassTilesWorld, grassTiles);
-        drawTiles(g, pathTilesWorld, pathTiles);
+        
 
-        //draw player
-        currentPlayer.draw(g,worldXOffset, worldYOffset);
-
-        //draw enemy
-        for(enemyTemplate enemy : enemies) {
-            enemy.draw(g, worldXOffset, worldYOffset);
-        }
-
-        //draw UI
-        currentUI.draw(g);
+        
     }
 }

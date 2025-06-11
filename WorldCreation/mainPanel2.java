@@ -342,7 +342,8 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             currentTileString = "Collision Tile";
         }
         g.drawString("Current Tile: " + currentTileString, 10, 20);
-
+        //current moues position (in world pos)
+        g.drawString("Mouse Position: (" + (int)((mouseX + worldXOffset) * (1/worldScale)) + ", " + (int)((mouseY + worldYOffset) * (1/worldScale)) + ")", 10, 40);
 
     }
 

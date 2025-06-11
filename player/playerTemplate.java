@@ -136,9 +136,16 @@ public class playerTemplate{
         }
         
         //check that the player isnt colliding with world, if not allow to move
-        if(!currentWorld.isColliding(x+(Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed, y+(Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed)){
-            x += (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed;
-            y += (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed;
+        // Check X movement
+        float nextX = x + (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed * (xVel < 0 ? -1 : 1)) * (int)speed;
+        if (!currentWorld.isColliding(nextX, y, false)) {
+            x = (int)nextX;
+        }
+
+        // Check Y movement
+        float nextY = y + (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed * (yVel < 0 ? -1 : 1)) * (int)speed;
+        if (!currentWorld.isColliding(x, nextY, false)) {
+            y = (int)nextY;
         }
 
         // Ensure player stays within bounds

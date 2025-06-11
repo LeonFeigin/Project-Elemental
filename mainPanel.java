@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.*;
 
+import world.starterWorld;
 import world.testWorld;
 import world.worldTemplate;
 
@@ -20,7 +21,7 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
 
     Timer timer;
     public mainPanel(){
-        setWorld(new testWorld());
+        setWorld(new starterWorld());
 
         timer = new Timer(1, e -> {
             currentWorld.update();

@@ -6,6 +6,7 @@ import java.awt.RenderingHints.Key;
 import javax.swing.*;
 
 import attack.bullet;
+import enemy.enemySpawner;
 import enemy.enemyTemplate;
 import player.playerFire;
 import player.playerSwitch;
@@ -22,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
@@ -59,18 +61,50 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     public ArrayList<bullet> bullets = new ArrayList<>(); // List to hold bullets fired by the attack
 
-
+    public ArrayList<enemySpawner> enemySpawners = new ArrayList<>(); // List to hold enemy spawners
 
     private boolean AisPressed = false;
     private boolean DisPressed = false;
     private boolean WisPressed = false;
     private boolean SisPressed = false;
 
-    public worldTemplate() {
+    public worldTemplate(int[][] grassTilesWorld, int[][] pathTilesWorld, int[][] collideTiles) {
         //get grass tiles
         getImages("world/tileset/grass/", grassTiles, 32, 77);
         getImages("world/tileset/path/", pathTiles, 32, 77);
         playerSwitch = new playerSwitch(this);
+
+        this.grassTilesWorld = grassTilesWorld;
+        this.pathTilesWorld = pathTilesWorld;
+        this.collideTiles = collideTiles;
+    }
+
+    public static int[][] loadAWorld(String pathToFile){
+        try{
+            File file = new File(pathToFile);
+            Scanner scan = new Scanner(file);
+            int rows = 0;
+            while(scan.hasNextLine()) {
+                scan.nextLine();
+                rows++;
+            }
+            scan.close();
+            int[][] world = new int[rows][];
+            scan = new Scanner(file);
+            for (int i = 0; i < rows; i++) {
+                String line = scan.nextLine(); // Remove the brackets
+                line = line.substring(1, line.length() - 1);
+                String[] numbers = line.split(",");
+                world[i] = new int[numbers.length];
+                for (int j = 0; j < numbers.length; j++) {
+                    world[i][j] = Integer.parseInt(numbers[j].replace(" ", ""));
+                }
+            }
+            return world;
+        }catch(IOException ex) {
+            System.out.println("File not found!");
+        }
+        return null;
     }
 
     public int getWorldWidth() {
@@ -114,14 +148,23 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         System.exit(0); // Exit the game
     }
     
-    public boolean isColliding(float x, float y){
+    public boolean isColliding(float x, float y, boolean isEnemy){
         for (int i = 0; i < collideTiles.length; i++) {
             for (int j = 0; j < collideTiles[i].length; j++) {
-                if( collideTiles[i][j] == 1) {
-                    if (x > j * 32-1 && x < j * 32 + 33 && y > i * 32-1 && y < i * 32 + 33) {
-                        return true;
+                if(isEnemy){
+                    if(collideTiles[i][j] == 0 || collideTiles[i][j] == 1){
+                        if (x > j * 32-1 && x < j * 32 + 33 && y > i * 32-1 && y < i * 32 + 33) {
+                            return true;
+                        }
+                    }
+                }else{
+                    if(collideTiles[i][j] == 0){
+                        if (x > j * 32-1 && x < j * 32 + 33 && y > i * 32-1 && y < i * 32 + 33) {
+                            return true;
+                        }
                     }
                 }
+                
             }
         }
         return false;
@@ -148,6 +191,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
                 timeRemaining = (long)playerSwitch.timeRemaining(); // Set the cooldown time when entering the menu
             }
             playerSwitch.setTimeRemaining(timeRemaining); // Reset the cooldown timer when in menu
+            currentUI.update();
             return;
         }
         
@@ -157,6 +201,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         for(int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update();
         }
+
+        for (int i = 0; i < enemySpawners.size(); i++) {
+            enemySpawners.get(i).update(); // Update each enemy spawner
+        }
     }
 
     public void paintComponent(Graphics g) {
@@ -165,7 +213,20 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         //draw a white background
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1280, 720);
+
+        drawTiles(g, grassTilesWorld, grassTiles);
+        drawTiles(g, pathTilesWorld, pathTiles);
         
+        //draw player
+        currentPlayer.draw(g,worldXOffset, worldYOffset);
+
+        //draw enemy
+        for(enemyTemplate enemy : enemies) {
+            enemy.draw(g, worldXOffset, worldYOffset);
+        }
+
+        //draw UI
+        currentUI.draw(g);
     }
 
     public void drawTiles(Graphics g, int[][] tilesWorld, BufferedImage[] tiles) {

@@ -151,7 +151,7 @@ public class mainUI {
         //calculate FPS
         frames++;
         long currentTime = System.currentTimeMillis();
-        g.drawString("FPS: " + (frames * 1000 / (currentTime - startTime)), 10, 60);
+        g.drawString("FPS: " + (frames * 1000 / (Math.max(currentTime - startTime,1))), 10, 60);
 
         if(currentTime - startTime >= 1000) {
             frames = 0;
@@ -159,13 +159,24 @@ public class mainUI {
         }
 
         //collision render
-        g.setColor(Color.RED);
         for (int i = 0; i < currentWorld.getCollideTiles().length; i++) {
             for (int j = 0; j < currentWorld.getCollideTiles()[i].length; j++) {
-                if(currentWorld.getCollideTiles()[i][j] == 1) {
+                if(currentWorld.getCollideTiles()[i][j] != -1) {
+                    if(currentWorld.getCollideTiles()[i][j] == 1) {
+                        g.setColor(Color.BLUE); // Enemy Collision tile
+                    } else if (currentWorld.getCollideTiles()[i][j] == 0) {
+                        g.setColor(Color.RED); // World Collision tile
+                    }
                     g.drawRect(j * 32-currentWorld.worldXOffset, i * 32-currentWorld.worldYOffset, 32, 32);
                 }
             }
+        }
+
+        //spawner render
+        for (int i = 0; i < currentWorld.enemySpawners.size(); i++) {
+            g.setColor(Color.GREEN);
+            g.fillOval(currentWorld.enemySpawners.get(i).getX(), currentWorld.enemySpawners.get(i).getY(), 25, 25);
+            g.drawOval(currentWorld.enemySpawners.get(i).getX() - currentWorld.worldXOffset - currentWorld.enemySpawners.get(i).getRadius(), currentWorld.enemySpawners.get(i).getY() - currentWorld.worldYOffset - currentWorld.enemySpawners.get(i).getRadius(), currentWorld.enemySpawners.get(i).getRadius() * 2,  currentWorld.enemySpawners.get(i).getRadius() * 2);
         }
     }
 

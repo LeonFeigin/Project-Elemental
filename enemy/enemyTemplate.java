@@ -55,17 +55,24 @@ public class enemyTemplate {
     private long lastFrameChangeTime = 0;
     public int enemySize = 32;
 
-    public enemyTemplate(int x, int y, worldTemplate currentWorld) {
+    public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, float bulletSpeed, int bulletRange, int health, float maxSpeed, String name) {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
+        this.attackType = attackType; // Set the attack type for the enemy
+        this.attackRange = attackRange; // Set the attack range for the enemy
+        this.attackDamage = attackDamage; // Set the attack damage for the enemy
+        this.bulletSpeed = bulletSpeed; // Set the bullet speed for the enemy
+        this.bulletRange = bulletRange; // Set the bullet range for the enemy
+        this.health = health; // Initialize enemy health
+        this.maxSpeed = maxSpeed; // Set the maximum speed for the enemy
         attack = new attackTemplate(true, bulletSpeed, currentWorld, bulletRange); // Initialize attack with enemy properties
 
-        idleImage = sprite.getImages("enemy/template/idle/", enemySize);
-        sprite.getImages("enemy/template/running/down/", runningDownImages, enemySize, 4);
-        sprite.getImages("enemy/template/running/up/", runningUpImages, enemySize, 4);
-        sprite.getImages("enemy/template/running/left/", runningLeftImages, enemySize, 4);
-        sprite.getImages("enemy/template/running/right/", runningRightImages, enemySize, 4);
+        idleImage = sprite.getImages("enemy/"+name+"/idle/", enemySize);
+        sprite.getImages("enemy/"+name+"/running/down/", runningDownImages, enemySize, 4);
+        sprite.getImages("enemy/"+name+"/running/up/", runningUpImages, enemySize, 4);
+        sprite.getImages("enemy/"+name+"/running/left/", runningLeftImages, enemySize, 4);
+        sprite.getImages("enemy/"+name+"/running/right/", runningRightImages, enemySize, 4);
     }
 
     public void takeDamage(int damage) {
@@ -128,7 +135,7 @@ public class enemyTemplate {
         }
 
         //check for world collision and if not colliding, move the enemy
-        if(!attack.isActive() && !currentWorld.isColliding(x+(Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed, y+(Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed)){
+        if(!attack.isActive() && !currentWorld.isColliding(x+(Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed, y+(Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed, true)){
             x += (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed*(xVel < 0 ? -1 : 1))*speed;
             y += (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed*(yVel < 0 ? -1 : 1))*speed;
         }
