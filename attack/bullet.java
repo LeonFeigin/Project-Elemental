@@ -1,5 +1,6 @@
 package attack;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -53,6 +54,10 @@ public class bullet{
         bulletImage = sprite.getImages("attack/bulletImage/", bulletSize); // Load the bullet image
     }
 
+    public void updateAttackParent(attackTemplate attackParent) {
+        this.attackParent = attackParent; // Update the reference to the attack that fired this bullet
+    }
+
     public void update() {
         // Move bullet along velocity
         x += speed * vx;
@@ -104,6 +109,21 @@ public class bullet{
 
     public void draw(Graphics g, int worldXOffset, int worldYOffset) {
         // Draw the bullet image at the current position
-        g.drawImage(bulletImage, (int)x - worldXOffset, (int)y - worldYOffset, null);
+        if(bulletElementType != abilityAttacks.NO_ELEMENT){
+            if(bulletElementType == abilityAttacks.FIRE_ELEMENT){
+                g.setColor(new Color(255,0,0,100));
+            }else if(bulletElementType == abilityAttacks.ICE_ELEMENT){
+                g.setColor(new Color(0,0,255,100));
+            }else if(bulletElementType == abilityAttacks.LIGHTNING_ELEMENT){
+                g.setColor(new Color(255,0,255,100));
+            }else if(bulletElementType == abilityAttacks.WATER_ELEMENT){
+                g.setColor(new Color(0,255,255,100));
+            }else if(bulletElementType == abilityAttacks.EARTH_ELEMENT){
+                g.setColor(new Color(0,255,0,100));
+            }
+
+            g.fillOval((int)(x - worldXOffset-bulletSize/2f), (int)(y - worldYOffset-bulletSize/2f), bulletSize, bulletSize); // Draw a colored circle for the element type
+        }
+        g.drawImage(bulletImage, (int)(x - worldXOffset-bulletSize/2f), (int)(y - worldYOffset-bulletSize/2f), null);
     }
 }

@@ -55,6 +55,10 @@ public class attackTemplate {
         return bullets; // Return the list of bullets fired by the attack
     }
 
+    public void addBullet(bullet b) {
+        bullets.add(b); // Add a bullet to the list of bullets fired by the attack
+    }
+
     public void attack(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY) {
 
         if(System.currentTimeMillis() - lastTimeFired > inbetweenAttackCooldown && leftAmountOfShooting > 0) {
@@ -120,7 +124,6 @@ public class attackTemplate {
                 double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY+10*i) * Math.sin(angle) + initX;
                 double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY+10*i) * Math.cos(angle) + initY;
 
-                // System.out.println(newTargetX);
                 bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
                 bullets.add(newBullet);
             }
@@ -150,7 +153,7 @@ public class attackTemplate {
             bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle+=4;
-        }else if(attackType == 3){ // fihal boss
+        }else if(attackType == 3){ // fihal boss (around the enemy scaterd)
             if(!isActive){
                 isActive = true; // Mark the attack as active
                 if(isEnemy){
@@ -173,25 +176,10 @@ public class attackTemplate {
             vx = dx / length;
             vy = dy / length;
 
-            // System.out.println(newTargetX);
+
             bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
             bullets.add(newBullet);
             currentAngle++;
-        }else if(attackType == 4){ // single bullet
-            if(!isActive){
-                isActive = true; // Mark the attack as active
-                if(isEnemy) {
-                    leftAmountOfShooting = 2; // Reset the amount of shooting left
-                    attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
-                    inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
-                }
-            }
-            double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY) * Math.sin(angle) + initX;
-            double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY) * Math.cos(angle) + initY;
-
-            // System.out.println(newTargetX);
-            bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, isEnemy, currentWorld, this, attackDamage, attackRange, elementType);
-            bullets.add(newBullet);
         }
     }
 

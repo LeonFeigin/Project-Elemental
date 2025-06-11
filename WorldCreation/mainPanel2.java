@@ -1,3 +1,5 @@
+package WorldCreation;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,7 +20,7 @@ import java.awt.RenderingHints.Key;
 import javax.swing.*;
 
 import enemy.enemyTemplate;
-import player.player;
+import player.playerTemplate;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -35,7 +37,6 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
-    
         // HOW TO USE THIS:
         // SPACE BAR to change tile index
         // 1 to select grass tiles
@@ -279,9 +280,6 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        g.setColor(Color.RED);
-        g.fillOval(mouseX, mouseY, 16, 16);
-
         for (int i = 0; i < grassTilesWorld.size(); i++) {
             for (int j = 0; j < grassTilesWorld.get(i).size(); j++) {
             int tileIndex = grassTilesWorld.get(i).get(j);
@@ -323,11 +321,13 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
 
         g.setColor(Color.WHITE);
-        //draw the tile at the mouse position
+        // draw a white rectangle around the mouse cursor that magnets to a grid
         int tileSize = (int)(32 * worldScale);
-        int drawX = (mouseX + worldXOffset) / tileSize * tileSize;
-        int drawY = (mouseY + worldYOffset) / tileSize * tileSize;
-        g.drawRect(drawX, drawY, 32, 32);
+        int drawX = (int)((mouseX + worldXOffset) / tileSize) * tileSize - worldXOffset;
+        int drawY = (int)((mouseY + worldYOffset) / tileSize) * tileSize - worldYOffset;
+        g.drawRect(drawX, drawY, tileSize, tileSize);
+        
+
 
 
 
@@ -364,6 +364,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             if (choice == JOptionPane.YES_OPTION) {
                 grassTilesWorld.clear();
                 pathTilesWorld.clear();
+                collisionWorld.clear();
                 grassTilesWorld.add(new ArrayList<>());
                 grassTilesWorld.get(0).add(0); // Add a default tile to the first row
                 System.out.println("World cleared!");
@@ -394,7 +395,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
                 file = new File("grassTilesWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < grassTilesWorld.size(); i++) {
-                    System.out.println(grassTilesWorld.get(i).toString());
+                    // System.out.println(grassTilesWorld.get(i).toString());
                     filePrint.println(grassTilesWorld.get(i).toString());
                 }
                 filePrint.close();
@@ -409,7 +410,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
                 file = new File("pathTilesWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < pathTilesWorld.size(); i++) {
-                    System.out.println(pathTilesWorld.get(i).toString());
+                    // System.out.println(pathTilesWorld.get(i).toString());
                     filePrint.println(pathTilesWorld.get(i).toString());
                 }
                 filePrint.close();
@@ -424,7 +425,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
                 file = new File("collisionWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < collisionWorld.size(); i++) {
-                    System.out.println(collisionWorld.get(i).toString());
+                    // System.out.println(collisionWorld.get(i).toString());
                     filePrint.println(collisionWorld.get(i).toString());
                 }
                 filePrint.close();
@@ -513,7 +514,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
         // TODO Auto-generated method stub
     }
 
-
+ 
     @Override
     public void mousePressed(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1) { // Left click
@@ -535,6 +536,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
             for (int i = Math.min(initYRightClick, endY); i <= Math.max(initYRightClick, endY); i++) {
                 for (int j = Math.min(initXRightClick, endX); j <= Math.max(initXRightClick, endX); j++) {
+                    if(i < 0 || j < 0) continue; // Skip negative indices
                     placeTile(currentTile, j, i);
                 }
             }

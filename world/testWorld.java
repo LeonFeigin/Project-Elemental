@@ -123,15 +123,12 @@ public class testWorld extends worldTemplate {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    public playerTemplate player1 = new playerWater(160, 160, this);
-    public playerTemplate player2 = new playerFire(160, 160, this);
-
     public testWorld() {
         super();
         setGrassTilesWorld(grassTilesWorld);
         setPathTilesWorld(grassTilesWorld);
         setCollideTiles(collideTiles);
-        setCurrentPlayer(player1);
+        setCurrentPlayer(new playerWater(166, 166, this, null));
         currentUI = new mainUI(this);
 
         for (int i = 0; i < 1; i++) {
@@ -145,10 +142,6 @@ public class testWorld extends worldTemplate {
         if(currentUI.isInMenu()){
             currentUI.update();
             return;
-        }
-        currentPlayer.update();
-        for(int i = 0; i < enemies.size(); i++) {
-            enemies.get(i).update();
         }
     }
 

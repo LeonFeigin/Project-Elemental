@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import attack.attackTemplate;
+import attack.bullet;
 import world.worldTemplate;
 
 public class playerTemplate{
@@ -35,7 +36,7 @@ public class playerTemplate{
     private worldTemplate currentWorld;
 
     //Attack properties
-    private attackTemplate attack; // Attack template for player
+    public attackTemplate attack; // Attack template for player
     private int attackType = 0;
     private int elementType = 0; // Type of the element applied to the player 
     private int attackDamage = 10; // Damage dealt by the player's attack
@@ -48,7 +49,7 @@ public class playerTemplate{
     private int lastAttackY;
 
 
-    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerName) {
+    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerName, attackTemplate attack) {
         this.x = x;
         this.y = y;
         this.attackType = attackType; // Set the attack type for the player
@@ -79,7 +80,14 @@ public class playerTemplate{
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
+        this.attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
+
+        if(attack != null){
+            for (bullet bullet : attack.getBullets()) {
+                bullet.updateAttackParent(this.attack); // Update the attack reference for each bullet
+                this.attack.addBullet(bullet); // Initialize bullets in the attack
+            }
+        }
     }
     
     public void takeDamage(int damage) {
@@ -102,7 +110,6 @@ public class playerTemplate{
             lastAttackX = targetX;
             lastAttackY = targetY;
             attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
-            System.out.println(attackDamage);
         }
     }
 

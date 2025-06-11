@@ -5,6 +5,7 @@ import java.awt.RenderingHints.Key;
 
 import javax.swing.*;
 
+import attack.bullet;
 import enemy.enemyTemplate;
 import player.playerFire;
 import player.playerSwitch;
@@ -48,12 +49,17 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public playerTemplate currentPlayer;
 
     public playerSwitch playerSwitch;
+    private long timeRemaining = 0; // Time remaining for player switch cooldown
 
     public ui.mainUI currentUI;
 
     public boolean debugMode = false;
 
     public ArrayList<enemyTemplate> enemies = new ArrayList<>();
+
+    public ArrayList<bullet> bullets = new ArrayList<>(); // List to hold bullets fired by the attack
+
+
 
     private boolean AisPressed = false;
     private boolean DisPressed = false;
@@ -103,6 +109,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int[][] getCollideTiles() {
         return collideTiles;
     }
+
+    public void quitGame() {
+        System.exit(0); // Exit the game
+    }
     
     public boolean isColliding(float x, float y){
         for (int i = 0; i < collideTiles.length; i++) {
@@ -134,9 +144,19 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     public void update() {
         if(currentUI.isInMenu()){
+            if(timeRemaining == 0) {
+                timeRemaining = (long)playerSwitch.timeRemaining(); // Set the cooldown time when entering the menu
+            }
+            playerSwitch.setTimeRemaining(timeRemaining); // Reset the cooldown timer when in menu
             return;
         }
+        
+        timeRemaining = 0;
         currentUI.update(); // Update the UI
+        currentPlayer.update();
+        for(int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update();
+        }
     }
 
     public void paintComponent(Graphics g) {
@@ -172,13 +192,15 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
-            currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
-            System.out.println("Menu toggled: " + currentUI.isInMenu());
-            return;
-        }
+        
         if(!currentUI.isInMenu()){
             currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+            if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
+            currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
+            return;
+        }
+        }else{
+            currentUI.mouseClicked(e.getX(), e.getY()); // Handle mouse press in the UI
         }
         
     }
@@ -201,7 +223,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0); // Exit the game
+            currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
         }
 
         if(e.getKeyCode() == KeyEvent.VK_F3){
@@ -217,7 +239,6 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             if(e.getKeyCode() >= '1' && e.getKeyCode() <= '4') {
                 int playerType = e.getKeyCode() - '1'   ; // Convert key code to player type (1-5)
                 playerSwitch.switchPlayer(playerType); // Switch player based on key pressed
-                System.out.println("Switched to player type: " + playerType);
             }
 
             if(e.getKeyCode() == KeyEvent.VK_W) {

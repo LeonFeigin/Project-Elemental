@@ -17,13 +17,12 @@ public class mainUI {
     private boolean inMenu = false; // Whether the UI is in the menu state
 
     private int delayedPlayerHealth; // For delayed health updates
-
-    
-
     private BufferedImage[] healthBarImages = new BufferedImage[3]; // 0 = background, 1 = red bar (health)
-    private BufferedImage baseBackground;
-    private BufferedImage[] icons = new BufferedImage[8];
+    private BufferedImage healthBaseBackground;
+
     // 0 = x, 1 = check mark, 2 = question mark, 3 = plus, 4 = minus, 5 = settings, 6 = cancel, 7 = power button
+    private BufferedImage[] icons = new BufferedImage[8];
+    private BufferedImage pauseBackground;
 
     public mainUI(worldTemplate currentWorld) {
         // Initialize the UI with the current world
@@ -34,10 +33,13 @@ public class mainUI {
         sprite.getImages("ui/healthBar/", healthBarImages, 256, 64, 3);
 
         // Load base background image (1x:1u aspect ratio)
-        baseBackground = sprite.getImages("ui/base/", 90, 90);
+        healthBaseBackground = sprite.getImages("ui/base/", 90, 90);
+        
+        // Load base background image (1x:1u aspect ratio)
+        pauseBackground = sprite.getImages("ui/pauseMenu/", 1080, 520);
 
         // Load icons (1x:1u aspect ratio)
-        sprite.getImages("ui/icons/", icons, 16, 16, 8);
+        sprite.getImages("ui/icons/", icons, 32, 32, 8);
 
 
         // Initialize delayed player health to the player's max health
@@ -70,15 +72,27 @@ public class mainUI {
         drawPlayerSelection(g,40, 160);
 
         // Draw the base background
-        g.drawImage(baseBackground, 20, 20, null);
+        g.drawImage(healthBaseBackground, 20, 20, null);
 
         // Draw settings icon
         g.drawImage(icons[5], 10, 10, 32,32, null);
+
+        if(inMenu){
+            drawPauseMenu(g); // Draw the pause menu if in menu state
+        }
 
         //all debugging information
         if(currentWorld.debugMode){
             drawDebug(g);
         }
+    }
+
+    public void drawPauseMenu(Graphics g){
+        // Draw a semi-transparent background for the pause menu
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, 1280, 720);
+
+        g.drawImage(pauseBackground, 100, 100, 1080, 520,null); // Draw health bar background
     }
 
     public void drawPlayerSelection(Graphics g, int x, int y) {
@@ -97,6 +111,9 @@ public class mainUI {
                 case(3):
                     playerImage = sprite.getImages("player/playerIceSprites/idle/", 32);
                     break;
+                case(4):
+                    playerImage = sprite.getImages("player/playerLightningSprites/idle/", 32);
+                    break;
             }
 
             g.setColor(Color.black);
@@ -111,7 +128,7 @@ public class mainUI {
     }
 
     public void drawHealthBar(Graphics g,int x, int y) {
-        // //Player Health
+        //Player Health
         g.drawImage(healthBarImages[0], x, y, null); // Draw health bar background
         // Draw the filled part, cropped by health
         int healthWidth = (int)(256 * ((float)delayedPlayerHealth / currentWorld.currentPlayer.getMaxHealth()));
@@ -150,5 +167,15 @@ public class mainUI {
                 }
             }
         }
+    }
+
+    public void mouseClicked(int x, int y) {
+        if(x > 350 && x < 540 && y > 440 && y < 570){ // resume button
+            inMenu = false; // Exit the menu
+        }else if(x > 740 && x < 930 && y > 440 && y < 570){ // settings button
+            currentWorld.quitGame();
+        }
+            
+        System.out.println("Mouse clicked at: " + x + ", " + y);
     }
 }
