@@ -27,6 +27,11 @@ public class attackTemplate {
 
     private int currentAngle = 0; //used for attack type 3 & 4
 
+    public boolean isSpecialAttack = false; // Indicates if this is a special attack
+    private int specialInbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+    private int specialLeftAmountOfShooting = 2;
+    private int specialDefaultLeftAmountOfShooting = 2; // Default amount of shooting left
+
     //enemy constructor
     public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange) {
         this.isEnemyAttack = isEnemyAttack;
@@ -82,6 +87,51 @@ public class attackTemplate {
 
         }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
             leftAmountOfShooting = defaultLeftAmountOfShooting; // Reset the amount of shooting left
+        }
+    }
+
+    public void specialAttack(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY, int elementType) {
+        if(System.currentTimeMillis() - lastTimeFired > specialInbetweenAttackCooldown && specialLeftAmountOfShooting > 0) {
+            specialLeftAmountOfShooting--; // Decrease the amount of shooting left
+            isSpecialAttack = true; // Mark this as a special attack
+            specialAttacksShoot(attackType, attackDamage, initX, initY, targetX, targetY, elementType); // Call the special attack method to fire bullets
+            lastTimeFired = System.currentTimeMillis(); // Update the last time fired
+        }else if(System.currentTimeMillis() - lastTimeFired > attackCooldown) {
+            specialLeftAmountOfShooting = specialDefaultLeftAmountOfShooting; // Reset the amount of shooting left
+        }
+    }
+
+    private void specialAttacksShoot(int attackType, int attackDamage, int initX, int initY, int targetX, int targetY, int elementType){
+        double angle = Math.atan2(targetY-initY,targetX-initX);
+        
+        float dx = targetX - initX;
+        float dy = targetY - initY;
+        float length = (float)Math.sqrt(dx * dx + dy * dy);
+
+        float vx = dx / length;
+        float vy = dy / length;
+
+        if(attackType == 0){        //water: Huge wave
+            if(!isActive){
+                isActive = true; // Mark the attack as active
+                specialLeftAmountOfShooting = 3; // Reset the amount of shooting left
+                specialInbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+            }
+            for (int i = -2; i < 3; i++) {
+                double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY+10*i) * Math.sin(angle) + initX;
+                double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY+10*i) * Math.cos(angle) + initY;
+
+                bullet newBullet = new bullet((int)newInitX, (int)newInitY, vx, vy, speed, false, currentWorld, this, attackDamage, attackRange, elementType);
+                bullets.add(newBullet);
+            }
+        }else if(attackType == 1){  //lightning: Triple Strike
+
+        }else if(attackType == 2){  //ice: Huge Icicle
+
+        }else if(attackType == 3){  //fire: Fire wall
+
+        }else if(attackType == 4){  //earth: Tornado
+
         }
     }
 
@@ -190,9 +240,14 @@ public class attackTemplate {
             b.update(); // Update bullet position and check for collisions
         }
 
-        if(leftAmountOfShooting <= 0) {
+        if(leftAmountOfShooting <= 0 && !isSpecialAttack) {
             isActive = false; // Mark the attack as inactive when no bullets left to shoot
         }
+        if(specialLeftAmountOfShooting <= 0 && isSpecialAttack) {
+            isSpecialAttack = false; // Mark the special attack as inactive when no bullets left to shoot
+            isActive = false; // Also mark the attack as inactive
+        }
+
     }
 
     public void removeBullet(bullet b) {

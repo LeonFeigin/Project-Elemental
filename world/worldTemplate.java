@@ -255,11 +255,15 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public void mouseReleased(MouseEvent e) {
         
         if(!currentUI.isInMenu()){
-            currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+            if(currentPlayer.specialAttackSelected) {
+                currentPlayer.specialAttack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position    
+            }else{
+                currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+            }
             if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
-            currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
-            return;
-        }
+                currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
+                return;
+            }
         }else{
             currentUI.mouseClicked(e.getX(), e.getY()); // Handle mouse press in the UI
         }
@@ -300,6 +304,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             if(e.getKeyCode() >= '1' && e.getKeyCode() <= '4') {
                 int playerType = e.getKeyCode() - '1'   ; // Convert key code to player type (1-5)
                 playerSwitch.switchPlayer(playerType); // Switch player based on key pressed
+            }
+
+            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                currentPlayer.specialAttackSelected = !currentPlayer.specialAttackSelected; // Toggle special attack selection
             }
 
             if(e.getKeyCode() == KeyEvent.VK_W) {

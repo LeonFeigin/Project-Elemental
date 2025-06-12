@@ -91,7 +91,7 @@ public class bullet{
         //detect collision with collide tiles
         for (int i = 0; i < currentWorld.getCollideTiles().length; i++) {
             for (int j = 0; j < currentWorld.getCollideTiles()[i].length; j++) {
-                if(currentWorld.getCollideTiles()[i][j] == 1) {
+                if(currentWorld.getCollideTiles()[i][j] == 0) {
                     // Check if bullet collides with the tile
                     if (x > j * 32 && x < j * 32 + 32 && y > i * 32 && y < i * 32 + 32) {
                         attackParent.removeBullet(this); // Remove the bullet on collision

@@ -22,7 +22,8 @@ public class playerSwitch {
         }
         lastSwitch = System.currentTimeMillis();
         // Switch player based on playerType
-
+        currentWorld.currentPlayer.savePlayerState();
+        
         if(currentPlayerSelection[playerType] == 0) {
             currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
             currentPlayerSelection = new int[]{1,2,3,4};

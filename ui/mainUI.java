@@ -68,8 +68,10 @@ public class mainUI {
     }
 
     public void draw(Graphics g){
-        drawHealthBar(g, 90, 20);
+        drawHealthBar(g, 90, 30);
         drawPlayerSelection(g,40, 160);
+        drawCurrentPlayerStats(g, 115, 40);
+        drawPlayerSpecial(g, 63, 657); // Draw the player's special ability circle
 
         // Draw the base background
         g.drawImage(healthBaseBackground, 20, 20, null);
@@ -85,6 +87,25 @@ public class mainUI {
         if(currentWorld.debugMode){
             drawDebug(g);
         }
+    }
+
+    public void drawPlayerSpecial(Graphics g, int x, int y){
+        g.setColor(Color.BLACK);
+        if(currentWorld.currentPlayer.specialAttackSelected){
+            g.setColor(Color.RED);
+        }
+        g.drawOval(x-75/2, y-75/2, 75, 75);
+        g.setColor(new Color(0,0,0,100));
+        g.fillArc(x-75/2, y-75/2, 75, 75,0,(int)(360*(currentWorld.currentPlayer.getSpecialAttackCooldownRemaining()/(float)currentWorld.currentPlayer.getSpecialCooldown())));
+    }
+
+    public void drawCurrentPlayerStats(Graphics g, int x, int y){
+        // Draw the current player's stats
+        g.setColor(Color.BLACK);
+        g.setFont(g.getFont().deriveFont(16f));
+        g.drawString(currentWorld.currentPlayer.getPlayerName(), x, y);
+        g.drawString("Attack Damage: " + currentWorld.currentPlayer.getAttackDamage(), x, y + 50);
+        g.drawString("Reload Time:" + Math.round(currentWorld.currentPlayer.getAttackCooldown()/1000f*100f)/100f + "s", x, y+70);
     }
 
     public void drawPauseMenu(Graphics g){

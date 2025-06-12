@@ -3,6 +3,9 @@ package player;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import attack.attackTemplate;
 import attack.bullet;
@@ -34,6 +37,7 @@ public class playerTemplate{
 
     //World properties
     private worldTemplate currentWorld;
+    private String playerName = "defaultPlayer"; // Name of the player, used for loading sprites
 
     //Attack properties
     public attackTemplate attack; // Attack template for player
@@ -47,9 +51,15 @@ public class playerTemplate{
     private int bulletSpeed = 1;
     private int lastAttackX;
     private int lastAttackY;
+    private int specialAttackCooldown = 5000;
+    private long lastSpecialAttackTime = System.currentTimeMillis(); // Time of the last special attack
+    private int specialAttackId = 0; // ID for the special attack, can be used to differentiate between different special attacks
+    private String specialName; // Name of the special attack, used for loading sprites
+    public boolean specialAttackSelected = false;
+    private int specialAttackDamage = 20;
 
 
-    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerName, attackTemplate attack) {
+    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerNameDir, attackTemplate attack, String playerName, int specialAttackCooldown, int specialAttackId, String specialName, int specialAttackDamage) {
         this.x = x;
         this.y = y;
         this.attackType = attackType; // Set the attack type for the player
@@ -62,21 +72,26 @@ public class playerTemplate{
         this.playerHealth = maxHealth; // Initialize player health to max health
         this.playerMaxHealth = maxHealth; // Set the maximum health for the player
         this.elementType = elementType; // Set the element type for the player
+        this.playerName = playerName; // Set the player name for loading sprites
+        this.specialAttackCooldown = specialAttackCooldown; // Set the special attack cooldown for the player
+        this.specialAttackId = specialAttackId; // Set the special attack ID for the player
+        this.specialName = specialName; // Set the special attack name for loading sprites
+        this.specialAttackDamage = specialAttackDamage; // Set the special attack damage for the player
         
         //load idle image
-        idleImage = sprite.getImages("player/"+playerName+"/idle/", playerSize);
+        idleImage = sprite.getImages("player/"+playerNameDir+"/idle/", playerSize);
 
         // load running down images
-        sprite.getImages("player/"+playerName+"/running/down/", runningDownImages, playerSize,4);
+        sprite.getImages("player/"+playerNameDir+"/running/down/", runningDownImages, playerSize,4);
 
         // load running up images
-        sprite.getImages("player/"+playerName+"/running/up/", runningUpImages, playerSize,4);
+        sprite.getImages("player/"+playerNameDir+"/running/up/", runningUpImages, playerSize,4);
 
         // load running left images
-        sprite.getImages("player/"+playerName+"/running/left/", runningLeftImages, playerSize,4);
+        sprite.getImages("player/"+playerNameDir+"/running/left/", runningLeftImages, playerSize,4);
 
         // load running right images
-        sprite.getImages("player/"+playerName+"/running/right/", runningRightImages, playerSize,4);
+        sprite.getImages("player/"+playerNameDir+"/running/right/", runningRightImages, playerSize,4);
         
         this.currentWorld = currentWorld; // Set the current world reference
 
@@ -88,6 +103,8 @@ public class playerTemplate{
                 this.attack.addBullet(bullet); // Initialize bullets in the attack
             }
         }
+
+        loadPlayer(); // Load player state from file
     }
     
     public void takeDamage(int damage) {
@@ -105,18 +122,84 @@ public class playerTemplate{
         return playerMaxHealth;
     }
 
+    public int getAttackDamage() {
+        return attackDamage;
+    }
+
+    public int getAttackCooldown() {
+        return attackCooldown;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public long getSpecialAttackCooldownRemaining() {
+        return Math.max(0, specialAttackCooldown - (System.currentTimeMillis() - lastSpecialAttackTime));
+    }
+
+    public int getSpecialCooldown(){
+        return specialAttackCooldown;
+    }
+
+    public void loadPlayer(){
+        try {
+            File file = new File("player/saves/"+playerName.replace(" ", "")+".txt");
+            if(file == null || !file.exists()) {
+                System.out.println("Player save file not found, creating new one.");
+                savePlayerState(); // Create a new save file if it doesn't exist
+                return;
+            }else{
+                Scanner scan = new Scanner(file);
+                playerHealth = Integer.parseInt(scan.nextLine()); // Read player name
+                attackDamage = Integer.parseInt(scan.nextLine()); // Read player health
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void savePlayerState(){
+        try {
+            File file = new File("player/saves/"+playerName.replace(" ", "")+".txt");
+            if(file == null || !file.exists()) {
+                file.createNewFile(); // Create the file if it doesn't exist
+            }
+            PrintWriter pw = new PrintWriter(file);
+            //save like this
+            // health
+            // attack damage
+            pw.println(playerHealth);
+            pw.println(attackDamage);
+            pw.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
     public void attack(int targetX, int targetY) {
-        if(!attack.isActive()) {
+        if(!attack.isActive() && !attack.isSpecialAttack) {
             lastAttackX = targetX;
             lastAttackY = targetY;
             attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
         }
     }
 
+    public void specialAttack(int targetX, int targetY) {
+        if(!attack.isActive() && getSpecialAttackCooldownRemaining() == 0) {
+            specialAttackSelected = false;
+            lastSpecialAttackTime = System.currentTimeMillis(); // Update the last special attack time
+            attack.specialAttack(specialAttackId, targetY, targetY, targetY, targetX, targetY, targetY);
+        }
+    }
+
     public void update() {
         attack.update(); // Update attack state and bullets
         if(attack.isActive()) {
-            attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
+            if(attack.isSpecialAttack) {
+                attack.specialAttack(specialAttackId, specialAttackDamage, x, y, lastAttackX, lastAttackY, elementType); // Update special attack logic
+            } else {
+                attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
+            }
         }
 
         //animation logic
