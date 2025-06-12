@@ -69,9 +69,7 @@ public class enemySpawner {
                 //spawn enemy
                 int spawnX = x + (int)(Math.random() * (2 * spawnRadius)) - spawnRadius;
                 int spawnY = y + (int)(Math.random() * (2 * spawnRadius)) - spawnRadius;
-                currentWorld.enemies.add(getTypeFromID(enemyId, spawnX, spawnY));
-                System.out.println("Spawned enemy at: " + spawnX + ", " + spawnY);
-                
+                currentWorld.enemies.add(getTypeFromID(enemyId, spawnX, spawnY));                
             }
         }
     }

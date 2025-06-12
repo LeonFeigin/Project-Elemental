@@ -10,7 +10,8 @@ public class greenBambooEnemy extends enemyTemplate{
         super(x,y,currentWorld,
         0, // attackType
         10, // attackDamage
-        100, // attackRange
+        400, // attackRange
+        100, // closest player distance 
         1.0f, // bulletSpeed
         100, // bulletRange
         100, // health

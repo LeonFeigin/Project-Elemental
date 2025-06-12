@@ -33,7 +33,7 @@ public class enemyTemplate {
     private int attackType = 0;
     public int attackRange = 800; // Range within which the enemy can attack
     private int attackDamage = 10;
-    private int closestPlayerDistance = 200;
+    private int closestPlayerDistance;
     private attackTemplate attack; // Attack template for enemy
     private int playerLastSeenX = 0; // Last known X position of the player
     private int playerLastSeenY = 0; // Last known Y position of the player
@@ -55,12 +55,13 @@ public class enemyTemplate {
     private long lastFrameChangeTime = 0;
     public int enemySize = 32;
 
-    public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, float bulletSpeed, int bulletRange, int health, float maxSpeed, String name) {
+    public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, int closestPlayerDistance, float bulletSpeed, int bulletRange, int health, float maxSpeed, String name) {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
         this.attackType = attackType; // Set the attack type for the enemy
         this.attackRange = attackRange; // Set the attack range for the enemy
+        this.closestPlayerDistance = closestPlayerDistance; // Set the closest player distance for the enemy
         this.attackDamage = attackDamage; // Set the attack damage for the enemy
         this.bulletSpeed = bulletSpeed; // Set the bullet speed for the enemy
         this.bulletRange = bulletRange; // Set the bullet range for the enemy
