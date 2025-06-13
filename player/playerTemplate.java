@@ -51,15 +51,25 @@ public class playerTemplate{
     private int bulletSpeed = 1;
     private int lastAttackX;
     private int lastAttackY;
-    private int specialAttackCooldown = 5000;
-    private long lastSpecialAttackTime = System.currentTimeMillis(); // Time of the last special attack
-    private int specialAttackId = 0; // ID for the special attack, can be used to differentiate between different special attacks
-    private String specialName; // Name of the special attack, used for loading sprites
-    public boolean specialAttackSelected = false;
-    private int specialAttackDamage = 20;
 
+    //special attack properties
+    public attackTemplate specialAttack; // Attack template for player
+    private int specialAttackType = 0;
+    private int specialAttackDamage = 10; // Damage dealt by the player's attack
+    private int specialAttackRange = 100; // Range of the player's attack
+    private int specialAttackCooldown = 500; // Cooldown time for the player's attack in milliseconds
+    private int specialInbetweenAttackCooldown = 100; // Cooldown time between attacks in milliseconds
+    private int specialAttackSize = 5; //how many bullets the player can shoot at once
+    private int specialBulletSpeed = 1;
+    private String specialName;
+    private int specialLastAttackX;
+    private int specialLastAttackY;
+    public boolean specialAttackSelected = false; // Flag to indicate if the special attack is selected
 
-    public playerTemplate(int x, int y, int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, int maxHealth, worldTemplate currentWorld, String playerNameDir, attackTemplate attack, String playerName, int specialAttackCooldown, int specialAttackId, String specialName, int specialAttackDamage) {
+    public playerTemplate(int x, int y, 
+                            int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, 
+                            int maxHealth, worldTemplate currentWorld, String playerNameDir, attackTemplate attack, String playerName, 
+                            int specialAttackType, int specialAttackDamage, int specialAttackRange, int specialAttackCooldown, int specialInbetweenAttackCooldown, int specialAttackSize, int specialBulletSpeed, String specialName, attackTemplate specialAttack) {
         this.x = x;
         this.y = y;
         this.attackType = attackType; // Set the attack type for the player
@@ -73,10 +83,14 @@ public class playerTemplate{
         this.playerMaxHealth = maxHealth; // Set the maximum health for the player
         this.elementType = elementType; // Set the element type for the player
         this.playerName = playerName; // Set the player name for loading sprites
-        this.specialAttackCooldown = specialAttackCooldown; // Set the special attack cooldown for the player
-        this.specialAttackId = specialAttackId; // Set the special attack ID for the player
-        this.specialName = specialName; // Set the special attack name for loading sprites
+        this.specialAttackType = specialAttackType; // Set the special attack type for the player
         this.specialAttackDamage = specialAttackDamage; // Set the special attack damage for the player
+        this.specialAttackRange = specialAttackRange; // Set the special attack range for the player
+        this.specialAttackCooldown = specialAttackCooldown; // Set the special attack cooldown for the player
+        this.specialInbetweenAttackCooldown = specialInbetweenAttackCooldown; // Set the cooldown between special attacks
+        this.specialAttackSize = specialAttackSize; // Set the size of the special attack for the player
+        this.specialBulletSpeed = specialBulletSpeed; // Set the speed of the bullets fired by the special attack
+        this.specialName = specialName; // Set the name of the special attack
         
         //load idle image
         idleImage = sprite.getImages("player/"+playerNameDir+"/idle/", playerSize);
@@ -95,12 +109,20 @@ public class playerTemplate{
         
         this.currentWorld = currentWorld; // Set the current world reference
 
-        this.attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize);
+        this.attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize); // Initialize the attack template for the player
+        this.specialAttack = new attackTemplate(false, specialBulletSpeed, currentWorld, specialAttackRange, specialAttackCooldown, specialInbetweenAttackCooldown, specialAttackSize); // Initialize the special attack template for the player
 
         if(attack != null){
             for (bullet bullet : attack.getBullets()) {
                 bullet.updateAttackParent(this.attack); // Update the attack reference for each bullet
                 this.attack.addBullet(bullet); // Initialize bullets in the attack
+            }
+        }
+
+        if(specialAttack != null){
+            for (bullet bullet : specialAttack.getBullets()) {
+                bullet.updateAttackParent(this.specialAttack); // Update the attack reference for each bullet
+                this.specialAttack.addBullet(bullet); // Initialize bullets in the special attack
             }
         }
 
@@ -135,7 +157,7 @@ public class playerTemplate{
     }
 
     public long getSpecialAttackCooldownRemaining() {
-        return Math.max(0, specialAttackCooldown - (System.currentTimeMillis() - lastSpecialAttackTime));
+        return specialAttack.getCooldownRemaming();
     }
 
     public int getSpecialCooldown(){
@@ -153,6 +175,7 @@ public class playerTemplate{
                 Scanner scan = new Scanner(file);
                 playerHealth = Integer.parseInt(scan.nextLine()); // Read player name
                 attackDamage = Integer.parseInt(scan.nextLine()); // Read player health
+                scan.close(); // Close the scanner
             }
         } catch (Exception e) {
         }
@@ -172,12 +195,12 @@ public class playerTemplate{
             pw.println(attackDamage);
             pw.close();
         } catch (Exception e) {
-            // TODO: handle exception
+            
         }
     }
 
     public void attack(int targetX, int targetY) {
-        if(!attack.isActive() && !attack.isSpecialAttack) {
+        if(!attack.isActive() && !specialAttackSelected) {
             lastAttackX = targetX;
             lastAttackY = targetY;
             attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
@@ -185,21 +208,23 @@ public class playerTemplate{
     }
 
     public void specialAttack(int targetX, int targetY) {
-        if(!attack.isActive() && getSpecialAttackCooldownRemaining() == 0) {
+        if(!specialAttack.isActive() && specialAttackSelected) {
             specialAttackSelected = false;
-            lastSpecialAttackTime = System.currentTimeMillis(); // Update the last special attack time
-            attack.specialAttack(specialAttackId, targetY, targetY, targetY, targetX, targetY, targetY);
+            specialLastAttackX = targetX;
+            specialLastAttackY = targetY;
+            specialAttack.specialAttack(specialAttackType, specialAttackDamage, x, y, specialLastAttackX, specialLastAttackY, elementType);
+            
         }
     }
 
     public void update() {
         attack.update(); // Update attack state and bullets
+        specialAttack.update(); // Update special attack state and bullets
         if(attack.isActive()) {
-            if(attack.isSpecialAttack) {
-                attack.specialAttack(specialAttackId, specialAttackDamage, x, y, lastAttackX, lastAttackY, elementType); // Update special attack logic
-            } else {
-                attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
-            }
+            attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
+        }
+        if(specialAttack.isActive()) {
+            specialAttack.specialAttack(specialAttackType, specialAttackDamage, x, y, specialLastAttackX, specialLastAttackY, elementType);
         }
 
         //animation logic
@@ -270,6 +295,7 @@ public class playerTemplate{
         g.drawImage(img, x-worldXOffset-16, y-worldYOffset-16, null); 
 
         attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
+        specialAttack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the special attack
 
         //show player hit box when in debug mode or in slow mode
         if(currentWorld.debugMode || speed == 1){

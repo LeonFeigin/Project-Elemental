@@ -25,19 +25,19 @@ public class playerSwitch {
         currentWorld.currentPlayer.savePlayerState();
         
         if(currentPlayerSelection[playerType] == 0) {
-            currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
+            currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
             currentPlayerSelection = new int[]{1,2,3,4};
         }else if(currentPlayerSelection[playerType] == 1) {
-            currentWorld.setCurrentPlayer(new playerWater(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
+            currentWorld.setCurrentPlayer(new playerWater(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
             currentPlayerSelection = new int[]{0,2,3,4};
         }else if(currentPlayerSelection[playerType] == 2) {
-            currentWorld.setCurrentPlayer(new playerEarth(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
+            currentWorld.setCurrentPlayer(new playerEarth(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
             currentPlayerSelection = new int[]{0,1,3,4};
         }else if(currentPlayerSelection[playerType] == 3) {
-            currentWorld.setCurrentPlayer(new playerIce(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
+            currentWorld.setCurrentPlayer(new playerIce(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
             currentPlayerSelection = new int[]{0,1,2,4};
         }else if(currentPlayerSelection[playerType] == 4) {
-            currentWorld.setCurrentPlayer(new playerLightning(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack));
+            currentWorld.setCurrentPlayer(new playerLightning(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
             currentPlayerSelection = new int[]{0,1,2,3};
         }
 
