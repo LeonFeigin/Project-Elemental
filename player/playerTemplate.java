@@ -280,6 +280,11 @@ public class playerTemplate{
 
         currentWorld.worldXOffset = Math.min(Math.max(x - 640, 0), Math.max(currentWorld.getWorldWidth()-1280,0)); // Center camera on player
         currentWorld.worldYOffset = Math.min(Math.max(y - 360, 0), Math.max(currentWorld.getWorldHeight()-720,0)); // Center camera on player
+
+        if(playerHealth <= 0){
+            // Handle player death
+            currentWorld.playerSwitch.playerDiedSwitch(); // Switch to another player if available
+        }
     }
     
     public void draw(Graphics g,int worldXOffset, int worldYOffset) {
@@ -304,5 +309,9 @@ public class playerTemplate{
             g.setColor(Color.RED);
             g.fillArc(x-worldXOffset-6, y-worldYOffset-6, 12, 12, 0, 360);
         }
+    }
+
+    public void resetPlayer() {
+        
     }
 }

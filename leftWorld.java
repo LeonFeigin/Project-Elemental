@@ -14,6 +14,7 @@ public class leftWorld extends worldTemplate {
 
         setCurrentPlayer(new playerWater(9937, 1740, this, null, null));
         currentUI = new mainUI(this);
+        currentUI.updateHealth(currentPlayer.getHealth());
 
         //bat spawner at the bottom 
         enemySpawners.add(new enemySpawner(4012, 3102, 5, this, 2000, 10, 300)); 
@@ -37,6 +38,8 @@ public class leftWorld extends worldTemplate {
     @Override
     public void quitGame(){
         myMainPanel.setWorld(new mainMenu(myMainPanel));
-        currentPlayer.savePlayerState();
+        if(!currentUI.deathMenu){
+            currentPlayer.savePlayerState();
+        }
     }
 }

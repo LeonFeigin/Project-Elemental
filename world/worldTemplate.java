@@ -262,6 +262,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             }
             if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
                 currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
+                currentUI.inPauseMenu = true;
                 return;
             }
         }else{
@@ -272,23 +273,21 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !currentUI.deathMenu) {
             currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
+            currentUI.inPauseMenu = currentUI.isInMenu(); // Reset pause menu state when toggling menu
         }
 
         if(debugMode){
@@ -310,7 +309,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         if(!currentUI.isInMenu()) {
             if(e.getKeyCode() >= '1' && e.getKeyCode() <= '4') {
                 int playerType = e.getKeyCode() - '1'   ; // Convert key code to player type (1-5)
-                playerSwitch.switchPlayer(playerType); // Switch player based on key pressed
+                playerSwitch.switchPlayer(playerType, false); // Switch player based on key pressed
             }
 
             if(e.getKeyCode() == KeyEvent.VK_W) {

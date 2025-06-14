@@ -23,6 +23,7 @@ public class bossWorld extends worldTemplate {
         super(worldTemplate.loadAWorld("world/bossWorldTiles/grassTilesWorld.txt"),worldTemplate.loadAWorld("world/bossWorldTiles/pathTilesWorld.txt"),worldTemplate.loadAWorld("world/bossWorldTiles/collisionWorld.txt"));
         setCurrentPlayer(new playerWater(2163, 2744, this, null, null)); //60, 615
         currentUI = new mainUI(this);
+        currentUI.updateHealth(currentPlayer.getHealth());
 
         this.myMainPanel = myMainPanel;
 
@@ -72,15 +73,13 @@ public class bossWorld extends worldTemplate {
 
                 hasBossEnded = true; // Reset the boss fight state
 
-                currentUI.hasWon = true; // Set the UI to indicate the player has won
+                currentUI.winMenu = true; // Set the UI to indicate the player has won
             }
         }
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
         if(hasBossStarted && !hasBossEnded) {
             //draw the name of the boss
             g.setColor(Color.BLACK);
@@ -94,6 +93,7 @@ public class bossWorld extends worldTemplate {
             drawBossHealth(g, 384, 50);
         }
 
+        super.paintComponent(g);
     }
 
     public void drawBossHealth(Graphics g, int x, int y){
@@ -112,6 +112,8 @@ public class bossWorld extends worldTemplate {
     @Override
     public void quitGame(){
         myMainPanel.setWorld(new mainMenu(myMainPanel));
-        currentPlayer.savePlayerState();
+        if(!currentUI.deathMenu){
+            currentPlayer.savePlayerState();
+        }
     }
 }

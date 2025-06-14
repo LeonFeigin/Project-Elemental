@@ -22,6 +22,7 @@ public class starterWorld extends worldTemplate {
             setCurrentPlayer(new playerWater(4883, 100, this, null, null));
         }
         currentUI = new mainUI(this);
+        currentUI.updateHealth(currentPlayer.getHealth());
 
         this.myMainPanel = myMainPanel;
 
@@ -44,6 +45,8 @@ public class starterWorld extends worldTemplate {
     @Override
     public void quitGame(){
         myMainPanel.setWorld(new mainMenu(myMainPanel));
-        currentPlayer.savePlayerState();
+        if(!currentUI.deathMenu){
+            currentPlayer.savePlayerState();
+        }
     }
 }

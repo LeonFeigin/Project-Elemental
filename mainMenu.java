@@ -35,8 +35,19 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         settingsImage = sprite.getImages("world/tileset/button/settings/", 600,570);
 
         currentUI = new mainUI(this);
-        //892 362
+
         enemySpawners.add(new enemy.enemySpawner(892, 362, (int)Math.round(Math.random()*6), this, 1, (int)Math.round(Math.random()*6)+5, 200)); // Example enemy spawner
+    }
+
+    @Override
+    public void update() {
+        // Update the enemies in the main menu
+        for (enemyTemplate enemy : enemies) {
+            enemy.update();
+        }
+        for (int i = 0; i < enemySpawners.size(); i++) {
+            enemySpawners.get(i).update();
+        }
     }
 
     @Override
@@ -90,7 +101,7 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
                 for (int i = 0; i < enemies.size(); i++) {
                     enemyTemplate enemy = enemies.get(i);
                     if (e.getX() >= enemy.x && e.getX() <= enemy.x + 32 && e.getY() >= enemy.y && e.getY() <= enemy.y + 32) {
-                        enemy.takeDamage(enemy.getMaxHealth() / 10); // Deal a lot of damage to the enemy
+                        enemy.takeDamage(enemy.getMaxHealth() / 5); // Deal a lot of damage to the enemy
                         if (enemy.health <= 0) {
                             enemies.remove(i); // Remove the enemy if it is dead
                             i--; // Adjust index after removal
