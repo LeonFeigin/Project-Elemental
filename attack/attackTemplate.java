@@ -27,14 +27,14 @@ public class attackTemplate {
 
     private int currentAngle = 0; //used for attack type 3 & 4
 
-    //enemy constructor
-    public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange) {
-        this.isEnemyAttack = isEnemyAttack;
-        this.currentWorld = world; // Set the current world reference
-        this.speed = speed; // Set the speed of the bullets fired by the attack
-        this.attackRange = attackRange; // Set the range of the attack
-        defaultLeftAmountOfShooting = 2; // Set the default amount of shooting left
-    }
+    // //enemy constructor
+    // public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange) {
+    //     this.isEnemyAttack = isEnemyAttack;
+    //     this.currentWorld = world; // Set the current world reference
+    //     this.speed = speed; // Set the speed of the bullets fired by the attack
+    //     this.attackRange = attackRange; // Set the range of the attack
+    //     defaultLeftAmountOfShooting = 2; // Set the default amount of shooting left
+    // }
 
     public attackTemplate(boolean isEnemyAttack, float speed, worldTemplate world, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting) {
         this.isEnemyAttack = isEnemyAttack;
@@ -218,11 +218,11 @@ public class attackTemplate {
         if(attackType == 0){// single shot attack
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                if(isEnemy) {
-                    leftAmountOfShooting = 4; // Reset the amount of shooting left
-                    attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
-                    inbetweenAttackCooldown = 150; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
-                }
+                // if(isEnemy) {
+                //     leftAmountOfShooting = 4; // Reset the amount of shooting left
+                //     attackCooldown = 1000; // Cooldown time for the attack in milliseconds (1 second)
+                //     inbetweenAttackCooldown = 150; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                // }
             }
             double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY) * Math.sin(angle) + initX;
             double newInitY = (initX - initX+32) * Math.sin(angle) + (initY - initY) * Math.cos(angle) + initY;
@@ -233,11 +233,11 @@ public class attackTemplate {
         }else if(attackType == 1){ // triple shot attack
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                if(isEnemy) {
-                    leftAmountOfShooting = 2; // Reset the amount of shooting left
-                    attackCooldown = 500; // Cooldown time for the attack in milliseconds (1 second)
-                    inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
-                }
+                // if(isEnemy) {
+                //     leftAmountOfShooting = 2; // Reset the amount of shooting left
+                //     attackCooldown = 500; // Cooldown time for the attack in milliseconds (1 second)
+                //     inbetweenAttackCooldown = 100; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                // }
             }
             for (int i = -1; i < 2; i++) {
                 double newInitX = (initX - initX+32) * Math.cos(angle) - (initY - initY+10*i) * Math.sin(angle) + initX;
@@ -249,11 +249,11 @@ public class attackTemplate {
         }else if(attackType == 2){ // around the object
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                if(isEnemy) {
-                    leftAmountOfShooting = 90; // Reset the amount of shooting left
-                    attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
-                    inbetweenAttackCooldown = 25; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
-                }
+                // if(isEnemy) {
+                //     leftAmountOfShooting = 90; // Reset the amount of shooting left
+                //     attackCooldown = 5000; // Cooldown time for the attack in milliseconds (1 second)
+                //     inbetweenAttackCooldown = 25; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                // }
             }
 
             double newInitX = (initX - initX+32) * Math.cos(Math.toRadians(currentAngle)) - (initY - initY) * Math.sin(Math.toRadians(currentAngle)) + initX;
@@ -275,11 +275,11 @@ public class attackTemplate {
         }else if(attackType == 3){ // fihal boss (around the enemy scaterd)
             if(!isActive){
                 isActive = true; // Mark the attack as active
-                if(isEnemy){
-                    leftAmountOfShooting = 360; // Reset the amount of shooting left
-                    attackCooldown = 10000; // Cooldown time for the attack in milliseconds (1 second)
-                    inbetweenAttackCooldown = 10; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
-                }
+                // if(isEnemy){
+                //     leftAmountOfShooting = 360; // Reset the amount of shooting left
+                //     attackCooldown = 10000; // Cooldown time for the attack in milliseconds (1 second)
+                //     inbetweenAttackCooldown = 10; // Cooldown time between each bullet fired in milliseconds (100 milliseconds)
+                // }
             }
 
             double newInitX = (initX - initX+32) * Math.cos(Math.toRadians(currentAngle)) - (initY - initY) * Math.sin(Math.toRadians(currentAngle)) + initX;

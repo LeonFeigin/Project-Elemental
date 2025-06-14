@@ -23,6 +23,7 @@ public class enemyTemplate {
     
     //Enemy health properties
     public int health = 100;
+    private float maxHealth = 100; // Maximum health of the enemy
     public ArrayList<Integer> elementsList = new ArrayList<>();
     private ArrayList<BufferedImage> elementsApplied = new ArrayList<>(); // List to hold images of applied elements
     
@@ -55,7 +56,7 @@ public class enemyTemplate {
     private long lastFrameChangeTime = 0;
     public int enemySize = 32;
 
-    public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, int closestPlayerDistance, float bulletSpeed, int bulletRange, int health, float maxSpeed, String name) {
+    public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, int closestPlayerDistance, float bulletSpeed, int bulletRange, int health, float maxSpeed, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting, String name) {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
         this.y = y;
@@ -66,8 +67,9 @@ public class enemyTemplate {
         this.bulletSpeed = bulletSpeed; // Set the bullet speed for the enemy
         this.bulletRange = bulletRange; // Set the bullet range for the enemy
         this.health = health; // Initialize enemy health
+        this.maxHealth = health; // Set the maximum health for the enemy
         this.maxSpeed = maxSpeed; // Set the maximum speed for the enemy
-        attack = new attackTemplate(true, bulletSpeed, currentWorld, bulletRange); // Initialize attack with enemy properties
+        attack = new attackTemplate(true, bulletSpeed, currentWorld, bulletRange, attackCooldown, inbetweenAttackCooldown, defaultLeftAmountOfShooting); // Initialize attack with enemy properties
 
         idleImage = sprite.getImages("enemy/"+name+"/idle/", enemySize);
         sprite.getImages("enemy/"+name+"/running/down/", runningDownImages, enemySize, 4);
@@ -102,6 +104,10 @@ public class enemyTemplate {
 
     public boolean isActive() {
         return isActive; // Return whether the enemy is active
+    }
+
+    public int getMaxHealth() {
+        return (int) maxHealth; // Return the maximum health of the enemy
     }
 
     public void update() {
@@ -173,20 +179,20 @@ public class enemyTemplate {
             int playerY = currentWorld.currentPlayer.y;
 
             // Calculate distance to player
-            double distanceToPlayer = Math.sqrt(Math.pow(playerX - x, 2) + Math.pow(playerY - y, 2));
+            double distanceToPlayer = Math.sqrt(Math.pow(playerX - (x+16), 2) + Math.pow(playerY - (y+16), 2));
 
             // If within attack range, stop moving and prepare to attack
             if (distanceToPlayer <= attackRange/2) {
                 if(distanceToPlayer > closestPlayerDistance/2) {
-                    xVel = (float) ((playerX - x) / distanceToPlayer); // Move towards the player
-                    yVel = (float) ((playerY - y) / distanceToPlayer); // Move towards the player  
+                    xVel = (float) ((playerX - (x+16)) / distanceToPlayer); // Move towards the player
+                    yVel = (float) ((playerY - (y+16)) / distanceToPlayer); // Move towards the player  
                 }else{
                     xVel = 0; // Stop moving towards the player
                     yVel = 0; // Stop moving towards the player
                 }
                 playerLastSeenX = playerX; // Update last seen position
                 playerLastSeenY = playerY; // Update last seen position
-                attack.attack(attackType, attackDamage, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
+                attack.attack(attackType, attackDamage, (int)x+16, (int)y+16, playerLastSeenX, playerLastSeenY); // Attack the player
             }
         }
     }
@@ -227,7 +233,7 @@ public class enemyTemplate {
             g.setColor(Color.BLACK);
             g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,36, 8,3,12);
             g.setColor(Color.RED);
-            g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,(int)(36*(health/100.0)) , 8,3,12);
+            g.fillRoundRect((int)x-2-worldXOffset, (int)y-10-worldYOffset,(int)(36*(health/maxHealth)) , 8,3,12);
 
             // Draw the elements applied to the enemy
             for (int i = 0; i < elementsApplied.size(); i++) {

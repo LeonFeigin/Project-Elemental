@@ -1,6 +1,5 @@
 package enemy;
 
-import enemy.enemyTemplate;
 import enemy._enemies.greenBambooEnemy;
 import world.worldTemplate;
 
@@ -42,6 +41,20 @@ public class enemySpawner {
     public Class<? extends enemyTemplate> getTypeFromID(int id){
         if(id == 0) {
             return greenBambooEnemy.class;
+        }else if(id == 1) {
+            return enemy._enemies.greyBambooEnemy.class;
+        }else if(id == 2) {
+            return enemy._enemies.peaShooterEnemy.class;
+        }else if(id == 3) {
+            return enemy._enemies.slimeEnemy.class;
+        }else if(id == 4) {
+            return enemy._enemies.trexEnemy.class;
+        }else if(id == 5) {
+            return enemy._enemies.batEnemy.class;
+        }else if(id == 6) {
+            return enemy._enemies.slime2Enemy.class;
+        }else if(id == 7) {
+            return enemy._enemies.mouseEnemy.class;
         }
 
         return null;
@@ -50,6 +63,20 @@ public class enemySpawner {
     public enemyTemplate getTypeFromID(int id, int posX, int posY){
         if(id == 0) {
             return new enemy._enemies.greenBambooEnemy(posX,posY,currentWorld);
+        }else if(id == 1) {
+            return new enemy._enemies.greyBambooEnemy(posX,posY,currentWorld);
+        }else if(id == 2) {
+            return new enemy._enemies.peaShooterEnemy(posX,posY,currentWorld);
+        }else if(id == 3) {
+            return new enemy._enemies.slimeEnemy(posX,posY,currentWorld);
+        }else if(id == 4) {
+            return new enemy._enemies.trexEnemy(posX,posY,currentWorld);
+        }else if(id == 5) {
+            return new enemy._enemies.batEnemy(posX,posY,currentWorld);
+        }else if(id == 6) {
+            return new enemy._enemies.slime2Enemy(posX,posY,currentWorld);
+        }else if(id == 7) {
+            return new enemy._enemies.mouseEnemy(posX,posY,currentWorld);
         }
 
         return null;

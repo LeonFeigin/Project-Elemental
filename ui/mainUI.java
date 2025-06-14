@@ -16,6 +16,8 @@ public class mainUI {
 
     private boolean inMenu = false; // Whether the UI is in the menu state
 
+    public boolean hasWon = false; // only used in the boss world
+
     private int delayedPlayerHealth; // For delayed health updates
     private BufferedImage[] healthBarImages = new BufferedImage[3]; // 0 = background, 1 = red bar (health)
     private BufferedImage healthBaseBackground;
@@ -91,9 +93,6 @@ public class mainUI {
 
     public void drawPlayerSpecial(Graphics g, int x, int y){
         g.setColor(Color.BLACK);
-        if(currentWorld.currentPlayer.specialAttackSelected){
-            g.setColor(Color.RED);
-        }
         g.drawOval(x-75/2, y-75/2, 75, 75);
         g.setColor(new Color(0,0,0,100));
         g.fillArc(x-75/2, y-75/2, 75, 75,0,(int)(360*(currentWorld.currentPlayer.getSpecialAttackCooldownRemaining()/(float)currentWorld.currentPlayer.getSpecialCooldown())));
@@ -195,10 +194,14 @@ public class mainUI {
 
         //spawner render
         for (int i = 0; i < currentWorld.enemySpawners.size(); i++) {
-            g.setColor(Color.GREEN);
+            g.setColor(new Color(0,100,0));
             g.fillOval(currentWorld.enemySpawners.get(i).getX(), currentWorld.enemySpawners.get(i).getY(), 25, 25);
             g.drawOval(currentWorld.enemySpawners.get(i).getX() - currentWorld.worldXOffset - currentWorld.enemySpawners.get(i).getRadius(), currentWorld.enemySpawners.get(i).getY() - currentWorld.worldYOffset - currentWorld.enemySpawners.get(i).getRadius(), currentWorld.enemySpawners.get(i).getRadius() * 2,  currentWorld.enemySpawners.get(i).getRadius() * 2);
         }
+    }
+
+    public void drawWinScreen(Graphics g){
+
     }
 
     public void mouseClicked(int x, int y) {

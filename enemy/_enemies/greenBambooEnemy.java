@@ -16,6 +16,9 @@ public class greenBambooEnemy extends enemyTemplate{
         100, // bulletRange
         100, // health
         1.0f, // maxSpeed
+        2000, // attackCooldown
+        100, // inbetweenAttackCooldown
+        3, // defaultLeftAmountOfShooting
         "greenBamboo" // name
         );
     }

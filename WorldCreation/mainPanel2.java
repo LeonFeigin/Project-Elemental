@@ -5,30 +5,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
 
-import world.testWorld;
-import world.worldTemplate;
-import java.awt.*;
-import java.awt.RenderingHints.Key;
-
-import javax.swing.*;
-
-import enemy.enemyTemplate;
-import player.playerTemplate;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -135,7 +117,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
         setFocusable(true);
         requestFocusInWindow();
 
-        File file = new File("grassTilesWorld.txt");
+        File file = new File("WorldCreation/files/grassTilesWorld.txt");
         if (file.exists()) {
             try {
                 java.util.Scanner scanner = new java.util.Scanner(file);
@@ -158,7 +140,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             }
         }
 
-        file = new File("pathTilesWorld.txt");
+        file = new File("WorldCreation/files/pathTilesWorld.txt");
         if (file.exists()) {
             try {
                 java.util.Scanner scanner = new java.util.Scanner(file);
@@ -181,7 +163,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             }
         }
 
-        file = new File("collisionWorld.txt");
+        file = new File("WorldCreation/files/collisionWorld.txt");
         if (file.exists()) {
             try {
                 java.util.Scanner scanner = new java.util.Scanner(file);
@@ -350,7 +332,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
 
@@ -390,10 +372,10 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             try{
-                File file = new File("grassTilesWorld.txt");
+                File file = new File("WorldCreation/files/grassTilesWorld.txt");
                 PrintWriter filePrint = new PrintWriter(file);
                 filePrint.close();
-                file = new File("grassTilesWorld.txt");
+                file = new File("WorldCreation/files/grassTilesWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < grassTilesWorld.size(); i++) {
                     // System.out.println(grassTilesWorld.get(i).toString());
@@ -405,10 +387,10 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             }
 
             try{
-                File file = new File("pathTilesWorld.txt");
+                File file = new File("WorldCreation/files/pathTilesWorld.txt");
                 PrintWriter filePrint = new PrintWriter(file);
                 filePrint.close();
-                file = new File("pathTilesWorld.txt");
+                file = new File("WorldCreation/files/pathTilesWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < pathTilesWorld.size(); i++) {
                     // System.out.println(pathTilesWorld.get(i).toString());
@@ -420,10 +402,10 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
             }
 
             try{
-                File file = new File("collisionWorld.txt");
+                File file = new File("WorldCreation/files/collisionWorld.txt");
                 PrintWriter filePrint = new PrintWriter(file);
                 filePrint.close();
-                file = new File("collisionWorld.txt");
+                file = new File("WorldCreation/files/collisionWorld.txt");
                 filePrint = new PrintWriter(file);
                 for (int i = 0; i < collisionWorld.size(); i++) {
                     // System.out.println(collisionWorld.get(i).toString());
@@ -512,7 +494,7 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
  
@@ -547,13 +529,13 @@ public class mainPanel2 extends JPanel implements MouseListener, KeyListener{
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
+        
     }
 
 }

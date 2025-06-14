@@ -1,7 +1,6 @@
 package world;
 
 import java.awt.*;
-import java.awt.RenderingHints.Key;
 
 import javax.swing.*;
 
@@ -100,6 +99,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
                     world[i][j] = Integer.parseInt(numbers[j].replace(" ", ""));
                 }
             }
+            scan.close();
             return world;
         }catch(IOException ex) {
             System.out.println("File not found!");
@@ -255,10 +255,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public void mouseReleased(MouseEvent e) {
         
         if(!currentUI.isInMenu()){
-            if(currentPlayer.specialAttackSelected) {
-                currentPlayer.specialAttack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position    
-            }else{
+            if(e.getButton() == MouseEvent.BUTTON1){
                 currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+            }else if(e.getButton() == MouseEvent.BUTTON3){
+                currentPlayer.specialAttack(e.getX()+worldXOffset, e.getY()+worldYOffset);
             }
             if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
                 currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
@@ -291,6 +291,13 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
         }
 
+        if(debugMode){
+            if(e.getKeyCode() == KeyEvent.VK_G) {
+                currentPlayer.toggleGodMode(); // Toggle god mode
+                System.out.println("God Mode Toggled");
+            }
+        }
+
         if(e.getKeyCode() == KeyEvent.VK_F3){
             debugMode = !debugMode; // Toggle debug mode
             if (debugMode) {
@@ -304,10 +311,6 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             if(e.getKeyCode() >= '1' && e.getKeyCode() <= '4') {
                 int playerType = e.getKeyCode() - '1'   ; // Convert key code to player type (1-5)
                 playerSwitch.switchPlayer(playerType); // Switch player based on key pressed
-            }
-
-            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-                currentPlayer.specialAttackSelected = !currentPlayer.specialAttackSelected; // Toggle special attack selection
             }
 
             if(e.getKeyCode() == KeyEvent.VK_W) {

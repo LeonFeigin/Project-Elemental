@@ -38,33 +38,33 @@ public class playerTemplate{
     //World properties
     private worldTemplate currentWorld;
     private String playerName = "defaultPlayer"; // Name of the player, used for loading sprites
+    private boolean godMode = false; // Flag to indicate if the player is in god mode
 
     //Attack properties
     public attackTemplate attack; // Attack template for player
-    private int attackType = 0;
-    private int elementType = 0; // Type of the element applied to the player 
-    private int attackDamage = 10; // Damage dealt by the player's attack
-    private int attackRange = 100; // Range of the player's attack
-    private int attackCooldown = 500; // Cooldown time for the player's attack in milliseconds
-    private int inbetweenAttackCooldown = 100; // Cooldown time between attacks in milliseconds
-    private int attackSize = 5; //how many bullets the player can shoot at once
-    private int bulletSpeed = 1;
+    private int attackType;
+    private int elementType; // Type of the element applied to the player 
+    private int attackDamage; // Damage dealt by the player's attack
+    private int attackRange; // Range of the player's attack
+    private int attackCooldown; // Cooldown time for the player's attack in milliseconds
+    private int inbetweenAttackCooldown; // Cooldown time between attacks in milliseconds
+    private int attackSize; //how many bullets the player can shoot at once
+    private int bulletSpeed;
     private int lastAttackX;
     private int lastAttackY;
 
     //special attack properties
     public attackTemplate specialAttack; // Attack template for player
-    private int specialAttackType = 0;
-    private int specialAttackDamage = 10; // Damage dealt by the player's attack
-    private int specialAttackRange = 100; // Range of the player's attack
-    private int specialAttackCooldown = 500; // Cooldown time for the player's attack in milliseconds
-    private int specialInbetweenAttackCooldown = 100; // Cooldown time between attacks in milliseconds
-    private int specialAttackSize = 5; //how many bullets the player can shoot at once
-    private int specialBulletSpeed = 1;
+    private int specialAttackType;
+    private int specialAttackDamage; // Damage dealt by the player's attack
+    private int specialAttackRange; // Range of the player's attack
+    private int specialAttackCooldown; // Cooldown time for the player's attack in milliseconds
+    private int specialInbetweenAttackCooldown; // Cooldown time between attacks in milliseconds
+    private int specialAttackSize; //how many bullets the player can shoot at once
+    private int specialBulletSpeed;
     private String specialName;
     private int specialLastAttackX;
     private int specialLastAttackY;
-    public boolean specialAttackSelected = false; // Flag to indicate if the special attack is selected
 
     public playerTemplate(int x, int y, 
                             int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, 
@@ -164,6 +164,10 @@ public class playerTemplate{
         return specialAttackCooldown;
     }
 
+    public void toggleGodMode() {
+        godMode = !godMode; // Toggle god mode
+    }
+
     public void loadPlayer(){
         try {
             File file = new File("player/saves/"+playerName.replace(" ", "")+".txt");
@@ -173,8 +177,8 @@ public class playerTemplate{
                 return;
             }else{
                 Scanner scan = new Scanner(file);
-                playerHealth = Integer.parseInt(scan.nextLine()); // Read player name
-                attackDamage = Integer.parseInt(scan.nextLine()); // Read player health
+                playerHealth = Integer.parseInt(scan.nextLine());
+                attackDamage = Integer.parseInt(scan.nextLine());
                 scan.close(); // Close the scanner
             }
         } catch (Exception e) {
@@ -200,7 +204,7 @@ public class playerTemplate{
     }
 
     public void attack(int targetX, int targetY) {
-        if(!attack.isActive() && !specialAttackSelected) {
+        if(!attack.isActive()) {
             lastAttackX = targetX;
             lastAttackY = targetY;
             attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
@@ -208,12 +212,10 @@ public class playerTemplate{
     }
 
     public void specialAttack(int targetX, int targetY) {
-        if(!specialAttack.isActive() && specialAttackSelected) {
-            specialAttackSelected = false;
+        if(!specialAttack.isActive()) {
             specialLastAttackX = targetX;
             specialLastAttackY = targetY;
             specialAttack.specialAttack(specialAttackType, specialAttackDamage, x, y, specialLastAttackX, specialLastAttackY, elementType);
-            
         }
     }
 
@@ -246,13 +248,13 @@ public class playerTemplate{
         //check that the player isnt colliding with world, if not allow to move
         // Check X movement
         float nextX = x + (Math.min(Math.abs(xVel), maxSpeed) == Math.abs(xVel) ? xVel : maxSpeed * (xVel < 0 ? -1 : 1)) * (int)speed;
-        if (!currentWorld.isColliding(nextX, y, false)) {
+        if (!currentWorld.isColliding(nextX, y, false) || godMode) {
             x = (int)nextX;
         }
 
         // Check Y movement
         float nextY = y + (Math.min(Math.abs(yVel), maxSpeed) == Math.abs(yVel) ? yVel : maxSpeed * (yVel < 0 ? -1 : 1)) * (int)speed;
-        if (!currentWorld.isColliding(x, nextY, false)) {
+        if (!currentWorld.isColliding(x, nextY, false) || godMode) {
             y = (int)nextY;
         }
 

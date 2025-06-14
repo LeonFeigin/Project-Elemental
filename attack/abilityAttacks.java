@@ -70,6 +70,11 @@ public class abilityAttacks {
             return (int)(initDamage * 2);
         }
 
+        // grow (earth and anything) 1.25x
+        if((elementsList.contains(EARTH_ELEMENT) && applyingElement != EARTH_ELEMENT) || (applyingElement == EARTH_ELEMENT && (elementsList.contains(FIRE_ELEMENT) || elementsList.contains(WATER_ELEMENT) || elementsList.contains(ICE_ELEMENT) || elementsList.contains(LIGHTNING_ELEMENT)))) {
+            return (int)(initDamage * 1.25);
+        }
+
         return initDamage; // If no elemental interaction applies, return the initial damage
     }
 }
