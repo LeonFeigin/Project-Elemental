@@ -33,6 +33,8 @@ public class mainUI {
 
     private BufferedImage inventoryImage; // Image for the inventory UI
 
+    private BufferedImage mouseIndicator;
+
     private BufferedImage deathMenuImage;
 
     public mainUI(worldTemplate currentWorld) {
@@ -53,6 +55,8 @@ public class mainUI {
         deathMenuImage = sprite.getImages("ui/deathMenu/", 1080, 520);
 
         inventoryImage = sprite.getImages("ui/inventory/", 1080, 520);
+
+        mouseIndicator = sprite.getImages("ui/mouse/", 32, 32);
 
         // Load icons (1x:1u aspect ratio)
         sprite.getImages("ui/icons/", icons, 32, 32, 8);
@@ -87,7 +91,7 @@ public class mainUI {
 
     public void draw(Graphics g){
         drawHealthBar(g, 90, 30);
-        drawPlayerSelection(g,40, 160);
+        drawPlayerSelection(g,26, 160);
         drawCurrentPlayerStats(g, 115, 40);
         drawPlayerSpecial(g, 63, 657); // Draw the player's special ability circle
 
@@ -121,8 +125,10 @@ public class mainUI {
     public void drawPlayerSpecial(Graphics g, int x, int y){
         g.setColor(Color.BLACK);
         g.drawOval(x-75/2, y-75/2, 75, 75);
+        g.drawImage(mouseIndicator, x-22, y-25, 50,50, null);
         g.setColor(new Color(0,0,0,100));
         g.fillArc(x-75/2, y-75/2, 75, 75,0,(int)(360*(currentWorld.currentPlayer.getSpecialAttackCooldownRemaining()/(float)currentWorld.currentPlayer.getSpecialCooldown())));
+        
     }
 
     public void drawCurrentPlayerStats(Graphics g, int x, int y){
