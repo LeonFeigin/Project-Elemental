@@ -60,6 +60,9 @@ public class bossWorld extends worldTemplate {
                 enemySpawners.add(new enemySpawner(1577, 586, 7, this, 2000, 15, 100));
                 enemySpawners.add(new enemySpawner(2560, 502, 4, this, 2000, 10, 100));
                 enemySpawners.add(new enemySpawner(3040, 930, 3, this, 2000, 10, 100));
+
+                audioPlayer.stopPlaying(); // Stop the boss music
+                audioPlayer.playAudioForever("bossMusic"); // Play the boss music
             }
         }else if(!hasBossEnded){
             if(delayedBossHealth > enemies.get(0).health){
@@ -74,6 +77,9 @@ public class bossWorld extends worldTemplate {
                 setPathTilesWorld(worldTemplate.loadAWorld("world/bossWorldTiles/pathTilesWorld.txt"));
 
                 hasBossEnded = true; // Reset the boss fight state
+
+                audioPlayer.stopPlaying(); // Stop the boss music
+                playAmbientSound();
 
                 currentUI.setInMenu(true);
                 currentUI.winMenu = true; // Set the UI to indicate the player has won

@@ -72,6 +72,12 @@ public class mainUI {
 
     public void setInMenu(boolean inMenu) {
         this.inMenu = inMenu;
+        if(!inMenu){
+            inPauseMenu = false;
+            deathMenu = false;
+            winMenu = false;
+            inInventory = false;
+        }
     }
 
     public void updateHealth(int health){

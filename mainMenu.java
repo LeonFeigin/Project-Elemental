@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
+import audio.audioPlayer;
 import enemy.enemyTemplate;
 import player.playerWater;
 import player.sprite;
@@ -70,12 +71,13 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         if(e.getButton() == MouseEvent.BUTTON1){
             //play button
             if(e.getX() >= 170 && e.getX() <= 370 && e.getY() >= 200 && e.getY() <= 333) {
-                
+                audioPlayer.playAudio("buttonClick"); // Play button click sound
                 currentPanel.setWorld(new starterWorld(currentPanel, 3)); // change to the starter world
             }
 
             //exit button
             else if (e.getX() >= 170 && e.getX() <= 370 && e.getY() >= 500 && e.getY() <= 633) {
+                audioPlayer.playAudio("buttonClick"); // Play button click sound
                 quitGame();
             }
 

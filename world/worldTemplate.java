@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import attack.bullet;
+import audio.audioPlayer;
 import enemy.enemySpawner;
 import enemy.enemyTemplate;
 import player.playerFire;
@@ -72,6 +73,8 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     private boolean WisPressed = false;
     private boolean SisPressed = false;
 
+    public audioPlayer audioPlayer; // Audio player instance
+
     public worldTemplate(int[][] grassTilesWorld, int[][] pathTilesWorld, int[][] collideTiles) {
         //get grass tiles
         getImages("world/tileset/grass/", grassTiles, 32, 77);
@@ -81,6 +84,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         this.grassTilesWorld = grassTilesWorld;
         this.pathTilesWorld = pathTilesWorld;
         this.collideTiles = collideTiles;
+
+        this.audioPlayer = new audioPlayer(); // Initialize the audio player
+
+        playAmbientSound();
     }
 
     public static int[][] loadAWorld(String pathToFile){
@@ -194,6 +201,8 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     }
 
     public void update() {
+        audioPlayer.update(); // Update the audio player
+
         if(currentUI.isInMenu()){
             if(timeRemaining == 0) {
                 timeRemaining = (long)playerSwitch.timeRemaining(); // Set the cooldown time when entering the menu
@@ -224,6 +233,10 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         for (int i = 0; i < enemySpawners.size(); i++) {
             enemySpawners.get(i).update(); // Update each enemy spawner
         }
+    }
+
+    public void playAmbientSound() {
+        audioPlayer.playAudioForever("worldAudio"); // Play ambient sound
     }
 
     public void paintComponent(Graphics g) {

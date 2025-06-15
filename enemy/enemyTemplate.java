@@ -81,6 +81,7 @@ public class enemyTemplate {
     // getters and setters
     public void takeDamage(int damage) {
         health -= damage;
+        currentWorld.audioPlayer.playAudio("enemyHurt"); // Play hurt sound when enemy takes damage
         if (health <= 0) {
             health = 0; // Ensure health does not go below zero
             isActive = false; // Set enemy to inactive when health reaches zero

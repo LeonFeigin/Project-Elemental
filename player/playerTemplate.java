@@ -153,6 +153,7 @@ public class playerTemplate{
 
     public void takeDamage(int damage) {
         playerHealth -= damage;
+        currentWorld.audioPlayer.playAudio("playerHurt"); // Play hurt sound when player takes damage
         if (playerHealth < 0) {
             playerHealth = 0; // Ensure health doesn't go below 0
         }
