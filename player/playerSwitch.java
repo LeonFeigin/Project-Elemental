@@ -118,7 +118,7 @@ public class playerSwitch {
     }
 
     public void setTimeRemaining(long time) {
-        lastSwitch = System.currentTimeMillis() - (3000-time);
+        lastSwitch = System.currentTimeMillis() - (1000-time);
     }
 
     public float timeRemaining() {
