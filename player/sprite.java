@@ -8,9 +8,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class sprite {
-    public sprite(){
-
-    }
+    /**
+     * This class is used to load and scale images for the player sprite.
+     * It provides methods to get images in different sizes and formats.
+     */
 
     public static BufferedImage getImages(String direction, int size) {
         try{

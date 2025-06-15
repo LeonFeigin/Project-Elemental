@@ -23,13 +23,15 @@ public class inventory {
 
     private worldTemplate currentWorld; // Reference to the current world
 
-    private item itemHover;
+    private item itemHover; // Item that is currently hovered over by the mouse
 
+    // Constructor to initialize the inventory with a reference to the current world
     public inventory(worldTemplate currentWorld) {
         this.currentWorld = currentWorld; // Initialize the current world reference
         
     }
 
+    // setters and getters
     public ArrayList<item> getItems(){
         return items; // Return the items in the inventory as an array
     }
@@ -55,6 +57,10 @@ public class inventory {
         }
     }
 
+    public void removeItem(item itemToRemove) {
+        items.remove(itemToRemove);
+    }
+
     public void update(){
         if(mousePressed) {
             if(itemIndexPressed != -1){
@@ -75,11 +81,7 @@ public class inventory {
                 itemHover = null; // Reset the item hover if not hovering over any item
             }
         }
-    }
-
-    public void removeItem(item itemToRemove) {
-        items.remove(itemToRemove);
-    }
+    }    
 
     public void mousePressed(int x, int y) {
         //each inventory space is 64x64 + 19px spacing // starts at 235px
@@ -121,10 +123,10 @@ public class inventory {
                 items.remove(itemIndexPressed);
                 itemPositions.remove(itemIndexPressed); // Remove the item's position
             }
-            mousePressed = false; // Reset the mouse pressed flag
-            itemIndexPressed = -1; // Reset the item index pressed
             updateItemPositions();
         }
+        mousePressed = false; // Reset the mouse pressed flag
+        itemIndexPressed = -1; // Reset the item index pressed
     }
 
     public void updateItemPositions() {

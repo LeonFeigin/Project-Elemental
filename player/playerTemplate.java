@@ -69,6 +69,8 @@ public class playerTemplate{
     private int specialLastAttackX;
     private int specialLastAttackY;
 
+
+    // Constructor to initialize the player with all necessary properties
     public playerTemplate(int x, int y, 
                             int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, 
                             int maxHealth, worldTemplate currentWorld, String playerNameDir, attackTemplate attack, String playerName, 
@@ -147,6 +149,8 @@ public class playerTemplate{
         loadPlayer(); // Load player state from file
     }
     
+    //setters and getters
+
     public void takeDamage(int damage) {
         playerHealth -= damage;
         if (playerHealth < 0) {

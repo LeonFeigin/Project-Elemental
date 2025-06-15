@@ -18,9 +18,6 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
 
     private BufferedImage[] buttons = new BufferedImage[3]; // 0 = play, 1 = settings, 2 = exit
     private BufferedImage title;
-
-    private boolean settingsOpen = false; // Flag to check if settings are open
-    private BufferedImage settingsImage;
     
     public mainMenu(mainPanel panel){
         super(worldTemplate.loadAWorld("world/mainMenuTiles/grassTilesWorld.txt"),worldTemplate.loadAWorld("world/mainMenuTiles/pathTilesWorld.txt"),worldTemplate.loadAWorld("world/mainMenuTiles/collisionWorld.txt")); // No tiles or collision for the main menu
@@ -31,8 +28,6 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
 
         sprite.getImages("world/tileset/button/", buttons, 200,133, 3); // Load the button images for play, settings, and exit 
         title = sprite.getImages("world/tileset/button/title/", 215,55); // Load the title image (12.5x : 1y)
-
-        settingsImage = sprite.getImages("world/tileset/button/settings/", 600,570);
 
         currentUI = new mainUI(this);
 
@@ -59,22 +54,18 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
                 enemies.get(i).draw(g, worldXOffset, worldYOffset); // Draw each enemy in the main menu
         }
 
-        for (int i = 0; i < 3; i++) {
-            g.drawImage(buttons[i], 170, 200+150*i, null);
-        }
+        g.drawImage(buttons[0], 170, 250, null);
+        g.drawImage(buttons[2], 170, 450, null);
 
-        g.drawImage(title, 165, 120, null);
-
-        if(settingsOpen) {
-            drawSettings(g, 597, 84);
-        }
+        g.drawImage(title, 165, 150, null);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        
+        // dont let the world do anything when a key is pressed in the main menu
     }
     
+    @Override
     public void mouseReleased(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1){
             //play button
@@ -83,36 +74,21 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
                 currentPanel.setWorld(new starterWorld(currentPanel, 3)); // change to the starter world
             }
 
-            //settings button
-            else if (e.getX() >= 170 && e.getX() <= 370 && e.getY() >= 350 && e.getY() <= 480) {
-                settingsOpen = !settingsOpen;
-            }
-
             //exit button
             else if (e.getX() >= 170 && e.getX() <= 370 && e.getY() >= 500 && e.getY() <= 633) {
                 quitGame();
             }
 
-            if(settingsOpen){
-                if(e.getX() >= 1150 && e.getX() <= 1182 && e.getY() >= 97 && e.getY() <= 125) {
-                    settingsOpen = false; // Close the settings
-                }
-            }else{ // let the player kill the enemies in the main menu
-                for (int i = 0; i < enemies.size(); i++) {
-                    enemyTemplate enemy = enemies.get(i);
-                    if (e.getX() >= enemy.x && e.getX() <= enemy.x + 32 && e.getY() >= enemy.y && e.getY() <= enemy.y + 32) {
-                        enemy.takeDamage(enemy.getMaxHealth() / 5); // Deal a lot of damage to the enemy
-                        if (enemy.health <= 0) {
-                            enemies.remove(i); // Remove the enemy if it is dead
-                            i--; // Adjust index after removal
-                        }
+            for (int i = 0; i < enemies.size(); i++) {
+                enemyTemplate enemy = enemies.get(i);
+                if (e.getX() >= enemy.x && e.getX() <= enemy.x + 32 && e.getY() >= enemy.y && e.getY() <= enemy.y + 32) {
+                    enemy.takeDamage(enemy.getMaxHealth() / 5); // Deal a lot of damage to the enemy
+                    if (enemy.health <= 0) {
+                        enemies.remove(i); // Remove the enemy if it is dead
+                        i--; // Adjust index after removal
                     }
                 }
             }
         }
-    }
-
-    public void drawSettings(Graphics g, int x, int y) {
-        g.drawImage(settingsImage, x, y, null);
     }
 }

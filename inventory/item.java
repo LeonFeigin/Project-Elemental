@@ -23,6 +23,8 @@ public class item {
         g.drawImage(itemImage, x, y, width, height, null);
     }
 
+    // setters and getters
+
     public String getItemName() {
         return itemName;
     }
