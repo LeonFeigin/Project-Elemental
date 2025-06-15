@@ -27,9 +27,6 @@ public class enemyTemplate {
     private float maxHealth = 100; // Maximum health of the enemy
     public ArrayList<Integer> elementsList = new ArrayList<>();
     private ArrayList<BufferedImage> elementsApplied = new ArrayList<>(); // List to hold images of applied elements
-    
-
-    private int currentState = 0; // 0 for idle, 1 for running
 
     //enemy attack properties
     private int attackType = 0;
@@ -40,11 +37,10 @@ public class enemyTemplate {
     private int playerLastSeenX = 0; // Last known X position of the player
     private int playerLastSeenY = 0; // Last known Y position of the player
     private float bulletSpeed = 1.1f;
-
     private int bulletRange = 1000;
 
+    //Enemy world properties
     private boolean isActive = true;
-
     private worldTemplate currentWorld;
 
     //Animation properties
@@ -56,7 +52,9 @@ public class enemyTemplate {
     private int currentFrame = 0;
     private long lastFrameChangeTime = 0;
     public int enemySize = 32;
+    private int currentState = 0; // 0 for idle, 1 for running
 
+    // Constructor for the enemyTemplate class
     public enemyTemplate(int x, int y, worldTemplate currentWorld, int attackType, int attackDamage, int attackRange, int closestPlayerDistance, float bulletSpeed, int bulletRange, int health, float maxSpeed, int attackCooldown, int inbetweenAttackCooldown, int defaultLeftAmountOfShooting, String name) {
         this.currentWorld = currentWorld; // Set the current world reference
         this.x = x;
@@ -72,6 +70,7 @@ public class enemyTemplate {
         this.maxSpeed = maxSpeed; // Set the maximum speed for the enemy
         attack = new attackTemplate(true, bulletSpeed, currentWorld, bulletRange, attackCooldown, inbetweenAttackCooldown, defaultLeftAmountOfShooting); // Initialize attack with enemy properties
 
+        //get all images
         idleImage = sprite.getImages("enemy/"+name+"/idle/", enemySize);
         sprite.getImages("enemy/"+name+"/running/down/", runningDownImages, enemySize, 4);
         sprite.getImages("enemy/"+name+"/running/up/", runningUpImages, enemySize, 4);
@@ -79,6 +78,7 @@ public class enemyTemplate {
         sprite.getImages("enemy/"+name+"/running/right/", runningRightImages, enemySize, 4);
     }
 
+    // getters and setters
     public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0) {
@@ -114,7 +114,7 @@ public class enemyTemplate {
 
     public void lootDrop(){
         //add enemy health to player health
-        currentWorld.currentPlayer.addHealth(health);
+        currentWorld.currentPlayer.addHealth((int)(maxHealth / 10)); // Add a portion of the enemy's max health to the player's health
     }
 
     public void addItemToPlayerInventory(item item) {
@@ -132,7 +132,6 @@ public class enemyTemplate {
         if(!isActive) {
             //only remvoe the enemy once all of its bullets are gone
             if(attack.getBullets().size() <= 0) {
-                
                 currentWorld.getEnemies().remove(this); // Remove the enemy from the world if health is zero
             }
             return; // If the enemy is not active, skip the update
@@ -183,6 +182,7 @@ public class enemyTemplate {
             }
         }
 
+        //if the enemy is in a middle of an attack, continue to spam attack
         if(attack.isActive()){
             attack.attack(attackType, attackDamage, (int)x+8, (int)y+8, playerLastSeenX, playerLastSeenY); // Attack the player
         }
@@ -258,6 +258,7 @@ public class enemyTemplate {
             }
         }
 
+        // Draw the attack bullets
         attack.drawBullets(g, worldXOffset, worldYOffset); // Draw bullets fired by the attack
         
     }

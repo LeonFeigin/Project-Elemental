@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 
 public class inventory {
 
-    item[] currentEquiped = new item[4]; // Array to hold currently equipped items (0: shoes, 1: pants, 2: shirt, 3: hat)
+    item[] currentEquiped = new item[4]; // Array to hold currently equipped items (0: shoes, 1: pants, 2: chestplate, 3: hat)
 
     ArrayList<item> items = new ArrayList<item>(); // List of items in the inventory
     ArrayList<int[]> itemPositions = new ArrayList<int[]>(); // List of positions for each item in the inventory
@@ -93,15 +93,17 @@ public class inventory {
         }
 
         //check if the mouse is pressed on an equipped item
-        for (int i = 0; i < currentEquiped.length; i++) {
-            if (x >= 680 + i * 84 && x <= 680 + i * 84 + 32 && y >= 175 && y <= 175 + 32) {
-                if (currentEquiped[i] != null) {
-                    items.add(currentEquiped[i]); // Add the equipped item back to the inventory
-                    itemPositions.add(new int[]{235, 334}); // Add a new position for the item in the inventory
-                    currentEquiped[i] = null; // Remove the item from equipped items
-                    itemIndexPressed = items.size() - 1; // Set the index of the newly added item
+        if(items.size() < 30){
+            for (int i = 0; i < currentEquiped.length; i++) {
+                if (x >= 680 + i * 84 && x <= 680 + i * 84 + 32 && y >= 175 && y <= 175 + 32) {
+                    if (currentEquiped[i] != null) {
+                        items.add(currentEquiped[i]); // Add the equipped item back to the inventory
+                        itemPositions.add(new int[]{235, 334}); // Add a new position for the item in the inventory
+                        currentEquiped[i] = null; // Remove the item from equipped items
+                        itemIndexPressed = items.size() - 1; // Set the index of the newly added item
+                    }
+                    return;
                 }
-                return;
             }
         }
     }
@@ -195,7 +197,7 @@ public class inventory {
             }
             pw.close(); // Close the PrintWriter to save changes
         } catch (Exception e) {
-            // TODO: handle exception
+            
         }
     }
 

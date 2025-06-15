@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import player.sprite;
 
 public class abilityAttacks {
+    // Elements id
     public static final int NO_ELEMENT = 0;
     public static final int FIRE_ELEMENT = 1;
     public static final int WATER_ELEMENT = 2;

@@ -252,11 +252,10 @@ public class playerTemplate{
                 file.createNewFile(); // Create the file if it doesn't exist
             }
             PrintWriter pw = new PrintWriter(file);
-            //save like this
+
             pw.println(playerHealth);
             pw.println(attackDamage);
             for (item item : inventory.getEquipt()) {
-
                 if(item != null){
                     pw.println(item.getItemName() + "," + item.getDamageBoost() + "," + item.getHealthBoost() + "," + item.getAttackSpeedBoost());
                 }

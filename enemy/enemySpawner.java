@@ -10,12 +10,13 @@ public class enemySpawner {
     private worldTemplate currentWorld;
 
     private int spawnRate; // How often enemies spawn
-    private int spawnAmount; // How many enemies spawn at once
+    private int spawnAmount; // How many enemies will spawn in total
     private int spawnRadius; // How far from the spawn point enemies can appear
     private int enemyId; // The type of enemy to spawn
 
     private long lastSpawnTime = System.currentTimeMillis(); // Time of the last spawn
 
+    // Constructor for the enemySpawner class
     public enemySpawner(int x, int y, int enemyID, worldTemplate currentWorld, int spawnRate, int spawnAmount, int spawnRadius) {
         this.x = x;
         this.y = y;
@@ -26,6 +27,7 @@ public class enemySpawner {
         this.spawnRadius = spawnRadius;
     }
 
+    // Getters for the spawner's properties
     public int getX() {
         return x;
     }
@@ -38,6 +40,7 @@ public class enemySpawner {
         return spawnRadius;
     }
 
+    // Get enemy class from its id
     public Class<? extends enemyTemplate> getTypeFromID(int id){
         if(id == 0) {
             return greenBambooEnemy.class;
@@ -60,6 +63,7 @@ public class enemySpawner {
         return null;
     }
 
+    // Get enemy instance from its id and position
     public enemyTemplate getTypeFromID(int id, int posX, int posY){
         if(id == 0) {
             return new enemy._enemies.greenBambooEnemy(posX,posY,currentWorld);
@@ -83,15 +87,16 @@ public class enemySpawner {
     }
 
     public void update(){
-        if(System.currentTimeMillis() - lastSpawnTime >= spawnRate) {
+        if(System.currentTimeMillis() - lastSpawnTime >= spawnRate) { // check if enough time has passed since the last spawn
             lastSpawnTime = System.currentTimeMillis();
             int amountOfEnemies = 0;
+            //check the amount of enemies of this type in the world
             for(enemyTemplate e : currentWorld.getEnemies()) {
                 if(e.getClass().equals(getTypeFromID(enemyId))) {
                     amountOfEnemies++;
                 }
             }
-
+            // If the amount of enemies is less than the spawn amount, spawn a new enemy
             if(amountOfEnemies < spawnAmount) {
                 //spawn enemy
                 int spawnX = x + (int)(Math.random() * (2 * spawnRadius)) - spawnRadius;

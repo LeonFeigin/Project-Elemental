@@ -9,33 +9,34 @@ import player.sprite;
 import world.worldTemplate;
 
 public class bullet{
-    float x; // X position of the bullet
-    float y; // Y position of the bullet
+    private float x; // X position of the bullet
+    private float y; // Y position of the bullet
 
-    float vx; // X velocity of the bullet
-    float vy; // Y velocity of the bullet
+    private float vx; // X velocity of the bullet
+    private float vy; // Y velocity of the bullet
 
-    float speed = 1; // Speed of the bullet
+    private float speed = 1; // Speed of the bullet
 
-    boolean isEnemy; // True if the bullet is fired by the player, false if by an enemy
+    private boolean isEnemy; // True if the bullet is fired by the player, false if by an enemy
 
-    BufferedImage bulletImage; // Image of the bullet
+    private BufferedImage bulletImage; // Image of the bullet
 
-    worldTemplate currentWorld; // Reference to the current world
+    private worldTemplate currentWorld; // Reference to the current world
 
-    attackTemplate attackParent; // Reference to the attack that fired this bullet
+    private attackTemplate attackParent; // Reference to the attack that fired this bullet
 
-    int damageAmount; // Amount of damage the bullet deals, default is 10
+    private int damageAmount; // Amount of damage the bullet deals, default is 10
 
-    int bulletElementType; // Element type of the bullet
+    private int bulletElementType; // Element type of the bullet
 
-    int bulletSize = 12; // Size of the bullet image
+    private int bulletSize = 12; // Size of the bullet 
 
-    int bulletRange;
+    private int bulletRange; // Range of the bullet, how far it can travel before disappearing
 
-    int initX; // Initial X position of the bullet
-    int initY; // Initial Y position of the bullet
+    private int initX; // Initial X position of the bullet
+    private int initY; // Initial Y position of the bullet
 
+    // Constructor for the bullet class
     public bullet(int startX, int startY, float vx, float vy, float speed, boolean isEnemy, worldTemplate world, attackTemplate attackParent, int damageAmount, int bulletRange, int bulletElementType) {
         this.x = startX;
         this.y = startY;
@@ -54,6 +55,7 @@ public class bullet{
         bulletImage = sprite.getImages("attack/bulletImage/", bulletSize); // Load the bullet image
     }
 
+    // Method to update the bullet's parent attack reference
     public void updateAttackParent(attackTemplate attackParent) {
         this.attackParent = attackParent; // Update the reference to the attack that fired this bullet
     }
@@ -77,7 +79,7 @@ public class bullet{
                         int damage = abilityAttacks.getDamageMultiplier(damageAmount, enemy.getElementsList(), bulletElementType);
                         enemy.takeDamage(damage); // Deal damage to the enemy
                         if(damageAmount != damage){
-                            enemy.resetElements();
+                            enemy.resetElements(); // if an element matchup occurs, reset the enemy's elements
                         }else{
                             enemy.applyElement(bulletElementType); // Add the element type to the enemy
                         }
@@ -108,7 +110,7 @@ public class bullet{
     }
 
     public void draw(Graphics g, int worldXOffset, int worldYOffset) {
-        // Draw the bullet image at the current position
+        //make a translucent circle for the bullet element type
         if(bulletElementType != abilityAttacks.NO_ELEMENT){
             if(bulletElementType == abilityAttacks.FIRE_ELEMENT){
                 g.setColor(new Color(255,0,0,100));
@@ -124,6 +126,8 @@ public class bullet{
 
             g.fillOval((int)(x - worldXOffset-bulletSize/2f), (int)(y - worldYOffset-bulletSize/2f), bulletSize, bulletSize); // Draw a colored circle for the element type
         }
+
+        // Draw the bullet image at the current position
         g.drawImage(bulletImage, (int)(x - worldXOffset-bulletSize/2f), (int)(y - worldYOffset-bulletSize/2f), null);
     }
 }

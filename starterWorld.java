@@ -70,7 +70,9 @@ public class starterWorld extends worldTemplate implements KeyListener, MouseLis
             // movement (spawn)
         g.drawString("Welcome To Project Elemental", 5640-worldXOffset, 4805-worldYOffset);
         g.drawString("To move around use WASD", 5655-worldXOffset, 4705-worldYOffset);
-        g.drawString("Press E to open inventory", 5665-worldXOffset, 4605-worldYOffset);
+        g.drawString("Hold shift to run", 5710-worldXOffset, 4605-worldYOffset);
+        g.drawString("Hold ctrl to walk slow", 5690-worldXOffset, 4625-worldYOffset);
+        g.drawString("Press E to open inventory", 5665-worldXOffset, 4505-worldYOffset);
             //attack (above spawn)
         g.drawString("To shoot, point your mouse and press left click", 6050-worldXOffset, 3530-worldYOffset);
         g.drawString("Press right click to use your special attack", 6050-worldXOffset, 3550-worldYOffset);

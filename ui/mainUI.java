@@ -131,7 +131,7 @@ public class mainUI {
         g.setFont(g.getFont().deriveFont(16f));
         g.drawString(currentWorld.currentPlayer.getPlayerName(), x, y);
         g.drawString("Attack Damage: " + currentWorld.currentPlayer.getAttackDamage(), x, y + 50);
-        g.drawString("Reload Time:" + Math.round(currentWorld.currentPlayer.getAttackCooldown()/1000.0*100.0)/100.0 + "s", x, y+70);
+        g.drawString("Reload Time:" + Math.max(Math.round(currentWorld.currentPlayer.getAttackCooldown()/1000.0*100.0)/100.0, 0) + "s", x, y+70);
     }
 
     public void drawPauseMenu(Graphics g){

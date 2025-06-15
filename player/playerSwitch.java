@@ -7,7 +7,7 @@ public class playerSwitch {
     worldTemplate currentWorld;
     long lastSwitch = System.currentTimeMillis();
 
-    public static final int coolddown = 3000;
+    public static final int coolddown = 1000;
 
     public int[] currentPlayerSelection = {0,2,3,4}; // assuming player with id 1 is out already
 
