@@ -11,7 +11,7 @@ This game was inspired by Touhou's bullet hell and Genshin Impact's Elemental Ma
 
 ## How to play
 
-Run The mainProg.java file
+Run the run.bat file which will auto-compile all of the java files for you. (Assuming you have java installed)
 
 By killing other monsters, you can collect various of armor that grants you buffs.
 
