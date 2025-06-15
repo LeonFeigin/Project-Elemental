@@ -47,10 +47,15 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     public int worldXOffset = 0;
     public int worldYOffset = 0;
 
+    public int mouseX = 0;
+    public int mouseY= 0;
+
     public playerTemplate currentPlayer;
 
     public playerSwitch playerSwitch;
     private long timeRemaining = 0; // Time remaining for player switch cooldown
+    private int attackTimeRemaining = 0; // Time remaining for attack cooldown
+    private int specialAttackTimeRemaining = 0; // Time remaining for special attack cooldown
 
     public ui.mainUI currentUI;
 
@@ -102,7 +107,6 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             scan.close();
             return world;
         }catch(IOException ex) {
-            System.out.println("File not found!");
         }
         return null;
     }
@@ -118,6 +122,11 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     }
     public int getWorldHeight() {
         return grassTilesWorld.length * 32;
+    }
+
+    public void setMousePosition(int x, int y) {
+        this.mouseX = x;
+        this.mouseY = y;
     }
 
     public void setGrassTilesWorld(int[][] newWorld) {
@@ -181,7 +190,6 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
                 image[i] = scaled;
             }
         }catch (IOException ex) {
-            System.out.println("File not found!");
         }
     }
 
@@ -190,12 +198,23 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
             if(timeRemaining == 0) {
                 timeRemaining = (long)playerSwitch.timeRemaining(); // Set the cooldown time when entering the menu
             }
+            if(attackTimeRemaining == 0){
+                attackTimeRemaining = (int)currentPlayer.attack.getCooldownRemaming(); // Set the cooldown time for attack when entering the menu
+            }
+            if(specialAttackTimeRemaining == 0){
+                specialAttackTimeRemaining = (int)currentPlayer.specialAttack.getCooldownRemaming(); // Set the cooldown time for special attack when entering the menu
+            }
             playerSwitch.setTimeRemaining(timeRemaining); // Reset the cooldown timer when in menu
+            currentPlayer.specialAttack.setCooldownRemaining(specialAttackTimeRemaining); // Reset the special attack cooldown when in menu
+            currentPlayer.attack.setCooldownRemaining(attackTimeRemaining); // Reset the attack cooldown when in menu
             currentUI.update();
             return;
         }
         
         timeRemaining = 0;
+        attackTimeRemaining = 0;
+        specialAttackTimeRemaining = 0;
+
         currentUI.update(); // Update the UI
         currentPlayer.update();
         for(int i = 0; i < enemies.size(); i++) {
@@ -246,12 +265,11 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void mousePressed(MouseEvent e) {
-        
+        currentUI.mousePressed(e.getX(), e.getY()); // Handle mouse press in the UI
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        
         if(!currentUI.isInMenu()){
             if(e.getButton() == MouseEvent.BUTTON1){
                 currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
@@ -283,10 +301,15 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !currentUI.deathMenu) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE && !currentUI.deathMenu && !currentUI.winMenu && !currentUI.inInventory) {
             currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
             currentUI.inPauseMenu = currentUI.isInMenu(); // Reset pause menu state when toggling menu
         }
+
+        if(e.getKeyCode() == KeyEvent.VK_E && !currentUI.deathMenu && !currentUI.winMenu && !currentUI.inPauseMenu) {
+                currentUI.setInMenu(!currentUI.isInMenu()); // Toggle menu state
+                currentUI.inInventory = currentUI.isInMenu(); // Reset pause menu state when toggling menu
+            }
 
         if(debugMode){
             if(e.getKeyCode() == KeyEvent.VK_G) {
@@ -298,9 +321,9 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
         if(e.getKeyCode() == KeyEvent.VK_F3){
             debugMode = !debugMode; // Toggle debug mode
             if (debugMode) {
-                System.out.println("Debug mode enabled");
+                System.out.println("Debug mode enabled (F3)");
             } else {
-                System.out.println("Debug mode disabled");
+                System.out.println("Debug mode disabled (F3)");
             }
         }
 

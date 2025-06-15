@@ -12,7 +12,7 @@ public class leftWorld extends worldTemplate {
 
         this.myMainPanel = myMainPanel;
 
-        setCurrentPlayer(new playerWater(9937, 1740, this, null, null));
+        setCurrentPlayer(new playerWater(9937, 1740, this, null, null,null,0,0,2,2));
         currentUI = new mainUI(this);
         currentUI.updateHealth(currentPlayer.getHealth());
 
@@ -40,6 +40,7 @@ public class leftWorld extends worldTemplate {
         myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
+            currentPlayer.inventory.saveInventory();
         }
     }
 }

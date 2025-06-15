@@ -21,7 +21,6 @@ public class sprite {
             scaleOp.filter(original, scaled);
             return scaled;
         }catch (IOException ex) {
-            System.out.println("File not found!");
         }
         return null;
     }
@@ -35,7 +34,6 @@ public class sprite {
             scaleOp.filter(original, scaled);
             return scaled;
         }catch (IOException ex) {
-            System.out.println("File not found!");
         }
         return null;
     }
@@ -51,7 +49,6 @@ public class sprite {
                 image[i] = scaled;
             }
         }catch (IOException ex) {
-            System.out.println("File not found!"); 
         }
     }
 
@@ -66,7 +63,22 @@ public class sprite {
                 image[i] = scaled;
             }
         }catch (IOException ex) {
-            System.out.println("File not found!");
         }
+    }
+
+    public static BufferedImage[] getImages(int size, int count, String direction){
+        BufferedImage[] image = new BufferedImage[count];
+        try{
+            for (int i = 0; i < count; i++) {
+                BufferedImage original = ImageIO.read(new File(direction + i+ ".png"));
+                BufferedImage scaled = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                AffineTransform at = AffineTransform.getScaleInstance(size / original.getWidth(), size / original.getHeight());
+                AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                scaleOp.filter(original, scaled);
+                image[i] = scaled;
+            }
+        }catch (IOException ex) {
+        }
+        return image;
     }
 }

@@ -21,6 +21,7 @@ public class mainUI {
     public boolean inPauseMenu = false; // Whether the UI is in the pause menu state
     public boolean deathMenu = false; // Whether the UI is in the death menu state
     public boolean winMenu = false; // only used in the boss world
+    public boolean inInventory = false; // Whether the UI is in the inventory state
 
     private int delayedPlayerHealth; // For delayed health updates
     private BufferedImage[] healthBarImages = new BufferedImage[3]; // 0 = background, 1 = red bar (health)
@@ -29,6 +30,8 @@ public class mainUI {
     // 0 = x, 1 = check mark, 2 = question mark, 3 = plus, 4 = minus, 5 = settings, 6 = cancel, 7 = power button
     private BufferedImage[] icons = new BufferedImage[8];
     private BufferedImage pauseBackground;
+
+    private BufferedImage inventoryImage; // Image for the inventory UI
 
     private BufferedImage deathMenuImage;
 
@@ -49,6 +52,8 @@ public class mainUI {
         // Load death menu image
         deathMenuImage = sprite.getImages("ui/deathMenu/", 1080, 520);
 
+        inventoryImage = sprite.getImages("ui/inventory/", 1080, 520);
+
         // Load icons (1x:1u aspect ratio)
         sprite.getImages("ui/icons/", icons, 32, 32, 8);
 
@@ -68,13 +73,15 @@ public class mainUI {
     public void updateHealth(int health){
         // Update the delayed player health
         delayedPlayerHealth = health;
-        System.out.println();
     }
 
     public void update(){
         frames++;
         if(delayedPlayerHealth > currentWorld.currentPlayer.getHealth()) {
-            delayedPlayerHealth--;
+            delayedPlayerHealth -= currentWorld.currentPlayer.getMaxHealth() / 100; // Decrease the delayed health by 10% of max health
+        }
+        if(inInventory){
+            currentWorld.currentPlayer.inventory.update(); // Update the inventory if in inventory state
         }
     }
 
@@ -86,7 +93,7 @@ public class mainUI {
 
         // Draw the base background
         g.drawImage(healthBaseBackground, 20, 20, null);
-        currentWorld.currentPlayer.draw(64,64, g); // Draw the current player
+        currentWorld.currentPlayer.draw(g, 64,64, 32,32); // Draw the current player
 
         // Draw settings icon
         g.drawImage(icons[5], 10, 10, 32,32, null);
@@ -100,6 +107,8 @@ public class mainUI {
             }
             else if(winMenu){
                 drawWinScreen(g);
+            }else if(inInventory){
+                drawInventory(g); // Draw the inventory if in inventory state
             }
         }
 
@@ -131,6 +140,34 @@ public class mainUI {
         g.fillRect(0, 0, 1280, 720);
 
         g.drawImage(pauseBackground, 100, 100, 1080, 520,null);
+    }
+
+    public void drawInventory(Graphics g){
+        // Draw a semi-transparent background for the pause menu
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, 1280, 720);
+
+        g.drawImage(inventoryImage, 100, 100, 1080, 520,null);
+
+        currentWorld.currentPlayer.draw(g, 503, 170, 64,64);
+
+        currentWorld.currentPlayer.inventory.draw(g);
+
+        int damageBoost = 0;
+        int healthBoost = 0;
+        float attackSpeedBoost = 0;
+        for (int i = 0; i < currentWorld.currentPlayer.inventory.getEquipt().length; i++) {
+            if(currentWorld.currentPlayer.inventory.getEquipt()[i] != null) {
+                damageBoost += currentWorld.currentPlayer.inventory.getEquipt()[i].getDamageBoost();
+                healthBoost += currentWorld.currentPlayer.inventory.getEquipt()[i].getHealthBoost();
+                attackSpeedBoost += currentWorld.currentPlayer.inventory.getEquipt()[i].getAttackSpeedBoost();
+            }
+        }
+        g.setColor(Color.BLACK);
+        g.setFont(g.getFont().deriveFont(16f));
+        g.drawString("Damage Boost: " + damageBoost, 215, 170);
+        g.drawString("Health Boost: " + healthBoost, 215, 190);
+        g.drawString("Attack Speed Boost: " + attackSpeedBoost, 215, 210);
     }
 
     public void drawPlayerSelection(Graphics g, int x, int y) {
@@ -245,38 +282,43 @@ public class mainUI {
         }
     }
 
-
-    public void mouseClicked(int x, int y) {
+    public void mousePressed(int x, int y){
         if(inMenu){
-            if(inPauseMenu){
-                if(x > 350 && x < 540 && y > 440 && y < 570){ // resume button
-                    inMenu = false; // Exit the menu
-                    inPauseMenu = false; // Reset pause menu state
-                }else if(x > 740 && x < 930 && y > 440 && y < 570){ // settings button
-                    currentWorld.quitGame();
-                }
-            }else if(deathMenu){
-                if(x > 547 && x < 734 && y > 443 && y < 568){ // restart button
-                    for (int i = 0; i < 5; i++) {
-                        try {
-                            File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayer(i).getPlayerName().replace(" ", "")+".txt");
-                            if(file.exists()) {
-                                file.delete();
-                            }
-                        } catch (Exception e) {
-                            
-                        }
-                    }
-                    currentWorld.quitGame();
-                }
-            }else if(winMenu){
-                if(x > 546 && x < 735 && y > 445 && y < 563){ // restart button
-                    setInMenu(false);
-                    winMenu = false; // Reset win menu state
-                }
+            if(inInventory){
+                currentWorld.currentPlayer.inventory.mousePressed(x, y); // Handle inventory mouse press
             }
         }
-            
-        System.out.println("Mouse clicked at: " + x + ", " + y);
+    }
+
+    public void mouseClicked(int x, int y) {
+        if(inPauseMenu){
+            if(x > 350 && x < 540 && y > 440 && y < 570){ // resume button
+                inMenu = false; // Exit the menu
+                inPauseMenu = false; // Reset pause menu state
+            }else if(x > 740 && x < 930 && y > 440 && y < 570){ // settings button
+                currentWorld.quitGame();
+            }
+        }else if(deathMenu){
+            if(x > 547 && x < 734 && y > 443 && y < 568){ // restart button
+                for (int i = 0; i < 5; i++) {
+                    try {
+                        File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayer(i).getPlayerName().replace(" ", "")+".txt");
+                        if(file.exists()) {
+                            file.delete();
+                        }
+                    } catch (Exception e) {
+                        
+                    }
+                }
+                currentWorld.quitGame();
+            }
+        }else if(winMenu){
+            if(x > 546 && x < 735 && y > 445 && y < 563){ // restart button
+                setInMenu(false);
+                winMenu = false; // Reset win menu state
+            }
+        }else if(inInventory){
+            currentWorld.currentPlayer.inventory.mouseReleased(x, y); // Handle inventory mouse press        
+        }
     }
 }

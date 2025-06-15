@@ -9,6 +9,8 @@ import java.util.Scanner;
 
 import attack.attackTemplate;
 import attack.bullet;
+import inventory.inventory;
+import inventory.item;
 import world.worldTemplate;
 
 public class playerTemplate{
@@ -39,6 +41,7 @@ public class playerTemplate{
     private worldTemplate currentWorld;
     private String playerName = "defaultPlayer"; // Name of the player, used for loading sprites
     private boolean godMode = false; // Flag to indicate if the player is in god mode
+    public inventory inventory; // Player's inventory
 
     //Attack properties
     public attackTemplate attack; // Attack template for player
@@ -69,7 +72,8 @@ public class playerTemplate{
     public playerTemplate(int x, int y, 
                             int attackType, int elementType, int attackDamage, int attackRange, int attackCooldown, int inbetweenAttackCooldown, int attackSize, int bulletSpeed, 
                             int maxHealth, worldTemplate currentWorld, String playerNameDir, attackTemplate attack, String playerName, 
-                            int specialAttackType, int specialAttackDamage, int specialAttackRange, int specialAttackCooldown, int specialInbetweenAttackCooldown, int specialAttackSize, int specialBulletSpeed, String specialName, attackTemplate specialAttack) {
+                            int specialAttackType, int specialAttackDamage, int specialAttackRange, int specialAttackCooldown, int specialInbetweenAttackCooldown, int specialAttackSize, int specialBulletSpeed, String specialName, attackTemplate specialAttack, inventory inventory,
+                            int xVel, int yVel, float speed, float maxSpeed) {
         this.x = x;
         this.y = y;
         this.attackType = attackType; // Set the attack type for the player
@@ -91,6 +95,10 @@ public class playerTemplate{
         this.specialAttackSize = specialAttackSize; // Set the size of the special attack for the player
         this.specialBulletSpeed = specialBulletSpeed; // Set the speed of the bullets fired by the special attack
         this.specialName = specialName; // Set the name of the special attack
+        this.xVel = xVel; // Set the initial x velocity of the player
+        this.yVel = yVel; // Set the initial y velocity of the player
+        this.speed = speed; // Set the speed of the player
+        this.maxSpeed = maxSpeed; // Set the maximum speed of the player
         
         //load idle image
         idleImage = sprite.getImages("player/"+playerNameDir+"/idle/", playerSize);
@@ -108,6 +116,16 @@ public class playerTemplate{
         sprite.getImages("player/"+playerNameDir+"/running/right/", runningRightImages, playerSize,4);
         
         this.currentWorld = currentWorld; // Set the current world reference
+
+        this.inventory = new inventory(currentWorld); // Initialize a new inventory if not provided
+        if(inventory != null) {
+            for (item item : inventory.getItems()) {
+                this.inventory.addItem(item); // Load items into the inventory
+                this.inventory.updateItemPositions();
+            }
+        }else{
+            this.inventory.loadInventory(); // load inventory
+        }
 
         this.attack = new attackTemplate(false, bulletSpeed, currentWorld, attackRange,attackCooldown,inbetweenAttackCooldown, attackSize); // Initialize the attack template for the player
         this.specialAttack = new attackTemplate(false, specialBulletSpeed, currentWorld, specialAttackRange, specialAttackCooldown, specialInbetweenAttackCooldown, specialAttackSize); // Initialize the special attack template for the player
@@ -140,12 +158,29 @@ public class playerTemplate{
         return playerHealth;
     }
 
+    public void addHealth(int health) {
+        playerHealth += health;
+        if (playerHealth > playerMaxHealth) {
+            playerHealth = playerMaxHealth; // Ensure health doesn't exceed max health
+        }
+    }
+
     public int getMaxHealth() {
         return playerMaxHealth;
     }
 
     public int getAttackDamage() {
-        return attackDamage;
+        int damageBuff = 0; // Initialize damage buff
+
+        for (item item : inventory.getEquipt()) {
+            if(item != null){
+                if(item.getDamageBoost() > 0) {
+                    damageBuff += item.getDamageBoost(); // Apply damage boost from equipped items
+                }
+            }
+        }
+
+        return attackDamage+damageBuff; // Return the attack damage with buffs applied
     }
 
     public int getAttackCooldown() {
@@ -154,6 +189,10 @@ public class playerTemplate{
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public void setSpecialAttackCooldown(int specialAttackCooldown) {
+        this.specialAttackCooldown = specialAttackCooldown; // Set the cooldown for the special attack
     }
 
     public long getSpecialAttackCooldownRemaining() {
@@ -172,13 +211,28 @@ public class playerTemplate{
         try {
             File file = new File("player/saves/"+playerName.replace(" ", "")+".txt");
             if(file == null || !file.exists()) {
-                System.out.println("Player save file not found, creating new one.");
                 savePlayerState(); // Create a new save file if it doesn't exist
                 return;
             }else{
                 Scanner scan = new Scanner(file);
                 playerHealth = Integer.parseInt(scan.nextLine());
                 attackDamage = Integer.parseInt(scan.nextLine());
+                while(scan.hasNextLine()) {
+                    String[] itemData = scan.nextLine().split(",");
+                    if(itemData.length == 4) {
+                        String itemName = itemData[0];
+                        item newItem = inventory.getItem(itemName); // Get the item from the inventory based on its name
+                        int damageBoost = Integer.parseInt(itemData[1]);
+                        int healthBoost = Integer.parseInt(itemData[2]);
+                        float attackSpeedBoost = Float.parseFloat(itemData[3]);
+                        
+                        newItem.setDamageBoost(damageBoost); // Set the damage boost for the item
+                        newItem.setHealthBoost(healthBoost); // Set the health boost for the item
+                        newItem.setAttackSpeedBoost(attackSpeedBoost); // Set the attack speed boost for the item
+                        
+                        inventory.equipItem(newItem); // Add the loaded item to the inventory
+                    }
+                }
                 scan.close(); // Close the scanner
             }
         } catch (Exception e) {
@@ -193,10 +247,14 @@ public class playerTemplate{
             }
             PrintWriter pw = new PrintWriter(file);
             //save like this
-            // health
-            // attack damage
             pw.println(playerHealth);
             pw.println(attackDamage);
+            for (item item : inventory.getEquipt()) {
+
+                if(item != null){
+                    pw.println(item.getItemName() + "," + item.getDamageBoost() + "," + item.getHealthBoost() + "," + item.getAttackSpeedBoost());
+                }
+            }
             pw.close();
         } catch (Exception e) {
             
@@ -207,7 +265,18 @@ public class playerTemplate{
         if(!attack.isActive()) {
             lastAttackX = targetX;
             lastAttackY = targetY;
-            attack.attack(attackType, attackDamage, x, y, lastAttackX, lastAttackY, elementType);
+
+            int damageBuff = 0; // Initialize damage buff
+
+            for (item item : inventory.getEquipt()) {
+                if(item != null){
+                    if(item.getDamageBoost() > 0) {
+                        damageBuff += item.getDamageBoost(); // Apply damage boost from equipped items
+                    }
+                }
+            }
+
+            attack.attack(attackType, attackDamage+damageBuff, x, y, lastAttackX, lastAttackY, elementType);
         }
     }
 
@@ -227,6 +296,19 @@ public class playerTemplate{
         }
         if(specialAttack.isActive()) {
             specialAttack.specialAttack(specialAttackType, specialAttackDamage, x, y, specialLastAttackX, specialLastAttackY, elementType);
+        }
+
+        int maxHealthBuff = 100;
+        for (item item : inventory.getEquipt()) {
+            if(item != null){
+                if(item.getHealthBoost() > 0) {
+                    maxHealthBuff += item.getHealthBoost(); // Apply health boost from equipped items
+                }
+            }
+        }
+        if(maxHealthBuff != playerMaxHealth) {
+            playerMaxHealth = maxHealthBuff; // Update player max health with buffs
+            currentWorld.currentUI.updateHealth(playerMaxHealth); // Update health bar in the UI
         }
 
         //animation logic
@@ -311,7 +393,7 @@ public class playerTemplate{
         }
     }
     //only used for drawing the player in the mainUI
-    public void draw(int x, int y, Graphics g) {
+    public void draw( Graphics g, int x, int y, int xSize, int ySize) {
         BufferedImage img = idleImage; // Assuming idleImage is set
         if(yVel > 0){
             img = runningDownImages[currentFrame];
@@ -323,7 +405,7 @@ public class playerTemplate{
             img = runningRightImages[currentFrame];
         }
         
-        g.drawImage(img, x-16, y-16, null); 
+        g.drawImage(img, x-16, y-16, xSize, ySize, null); 
     }
 
     public void resetPlayer() {

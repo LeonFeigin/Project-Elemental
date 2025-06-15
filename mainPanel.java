@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.*;
 
+import WorldCreation.mainPanel2;
 import world.worldTemplate;
 
 public class mainPanel extends JPanel implements MouseListener, KeyListener{
@@ -19,10 +20,14 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
 
     Timer timer;
     public mainPanel(){
-        setWorld(new starterWorld(this, 3));
+        setWorld(new mainMenu(this));
 
         timer = new Timer(1, e -> {
             currentWorld.update();
+
+            if (mainPanel.this.isFocusOwner()) {
+                currentWorld.setMousePosition((int)MouseInfo.getPointerInfo().getLocation().getX() - getLocationOnScreen().x, (int)MouseInfo.getPointerInfo().getLocation().getY() - getLocationOnScreen().y);
+            }
 
             repaint();
         });
@@ -30,6 +35,8 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
     }
 
     public void setWorld(worldTemplate world) {
+        removeKeyListener(currentWorld);
+        removeMouseListener(currentWorld);
         this.currentWorld = world;
         addKeyListener(currentWorld);
         addMouseListener(currentWorld);

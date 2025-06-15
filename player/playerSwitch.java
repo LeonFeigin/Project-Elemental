@@ -30,6 +30,8 @@ public class playerSwitch {
 
         // Switch player based on playerType
         currentWorld.currentPlayer.savePlayerState();
+        currentWorld.currentPlayer.inventory.saveInventory(); // Save the current player's inventory
+        
         
         saveCurrentPlayerHealth(currentWorld.currentPlayer);
 
@@ -37,49 +39,50 @@ public class playerSwitch {
             if(getPlayer(0).getHealth() <= 0){
                 return;
             }
-            currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
+            currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{1,2,3,4};
         }else if(currentPlayerSelection[playerType] == 1) {
             if(getPlayer(1).getHealth() <= 0){
                 return;
             }
-            currentWorld.setCurrentPlayer(new playerWater(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
+            currentWorld.setCurrentPlayer(new playerWater(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,2,3,4};
         }else if(currentPlayerSelection[playerType] == 2) {
             if(getPlayer(2).getHealth() <= 0){
                 return;
             }
-            currentWorld.setCurrentPlayer(new playerEarth(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
+            currentWorld.setCurrentPlayer(new playerEarth(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,1,3,4};
         }else if(currentPlayerSelection[playerType] == 3) {
             if(getPlayer(3).getHealth() <= 0){
                 return;
             }
-            currentWorld.setCurrentPlayer(new playerIce(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
+            currentWorld.setCurrentPlayer(new playerIce(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,1,2,4};
         }else if(currentPlayerSelection[playerType] == 4) {
             if(getPlayer(4).getHealth() <= 0){
                 return;
             }
-            currentWorld.setCurrentPlayer(new playerLightning(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack));
+            currentWorld.setCurrentPlayer(new playerLightning(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,1,2,3};
         }
 
         lastSwitch = System.currentTimeMillis();
         currentWorld.currentUI.updateHealth(currentWorld.currentPlayer.getHealth());
+        currentWorld.currentPlayer.inventory.loadInventory(); // Reload inventory for the new player
     }
 
     public playerTemplate getPlayer(int id){
         if(id == 0) {
-            return new playerFire(0,0,null,null,null);
+            return new playerFire(0,0,null,null,null,null,0,0,2,2);
         }else if(id == 1) {
-            return new playerWater(0,0,null,null,null);
+            return new playerWater(0,0,null,null,null,null,0,0,2,2);
         }else if(id == 2) {
-            return new playerEarth(0,0,null,null,null);
+            return new playerEarth(0,0,null,null,null,null,0,0,2,2);
         }else if(id == 3) {
-            return new playerIce(0,0,null,null,null);
+            return new playerIce(0,0,null,null,null,null,0,0,2,2);
         }else if(id == 4) {
-            return new playerLightning(0,0,null,null,null);
+            return new playerLightning(0,0,null,null,null,null,0,0,2,2);
         }
         return null;
     }

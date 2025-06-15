@@ -27,7 +27,7 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         
         this.currentPanel = panel; // Set the reference to the main panel
 
-        setCurrentPlayer(new playerWater(0, 0, this, null, null));
+        setCurrentPlayer(new playerWater(0, 0, this, null, null,null,0,0,2,2));
 
         sprite.getImages("world/tileset/button/", buttons, 200,133, 3); // Load the button images for play, settings, and exit 
         title = sprite.getImages("world/tileset/button/title/", 215,55); // Load the title image (12.5x : 1y)
@@ -55,8 +55,8 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         drawTiles(g, grassTilesWorld, grassTiles);
         drawTiles(g, pathTilesWorld, pathTiles);
 
-        for(enemyTemplate enemy : enemies) {
-            enemy.draw(g, worldXOffset, worldYOffset);
+        for (int i = 0; i < enemies.size(); i++) {
+                enemies.get(i).draw(g, worldXOffset, worldYOffset); // Draw each enemy in the main menu
         }
 
         for (int i = 0; i < 3; i++) {
@@ -74,12 +74,12 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
     public void keyPressed(KeyEvent e) {
         
     }
-
-    @Override
+    
     public void mouseReleased(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON1){
             //play button
             if(e.getX() >= 170 && e.getX() <= 370 && e.getY() >= 200 && e.getY() <= 333) {
+                
                 currentPanel.setWorld(new starterWorld(currentPanel, 3)); // change to the starter world
             }
 
@@ -109,11 +109,7 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
                     }
                 }
             }
-
-
         }
-
-        System.out.println("Mouse Released at: " + e.getX() + ", " + e.getY());
     }
 
     public void drawSettings(Graphics g, int x, int y) {

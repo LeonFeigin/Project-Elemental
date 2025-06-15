@@ -2,6 +2,7 @@ package player;
 
 import attack.abilityAttacks;
 import attack.attackTemplate;
+import inventory.inventory;
 import world.worldTemplate;
 
 public class playerLightning extends playerTemplate {
@@ -13,11 +14,11 @@ public class playerLightning extends playerTemplate {
     //                         int specialAttackType, int specialAttackDamage, int specialAttackRange, int specialAttackCooldown, int specialInbetweenAttackCooldown, int specialAttackSize, int specialBulletSpeed, String specialName) {
 
 
-    public playerLightning(int x, int y, worldTemplate currentWorld, attackTemplate attack, attackTemplate specialAttack) {
+    public playerLightning(int x, int y, worldTemplate currentWorld, attackTemplate attack, attackTemplate specialAttack, inventory inventory, int xVel, int yVel, float speed, float maxSpeed) {
         super(x, y,
         0, abilityAttacks.LIGHTNING_ELEMENT, 10, 1000, 1000, 100, 5, 2,
         100, currentWorld, "playerLightningSprites",attack, "Lightning Guy",
-        4, 20, 500, 5000, 100, 5, 3, "Tripple Strike", specialAttack);
+        4, 20, 500, 5000, 100, 5, 3, "Tripple Strike", specialAttack, inventory, xVel, yVel, speed, maxSpeed);
     }
     
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import attack.abilityAttacks;
 import attack.attackTemplate;
+import inventory.item;
 import world.worldTemplate;
 import player.sprite;
 
@@ -44,7 +45,7 @@ public class enemyTemplate {
 
     private boolean isActive = true;
 
-    worldTemplate currentWorld;
+    private worldTemplate currentWorld;
 
     //Animation properties
     public BufferedImage idleImage;
@@ -83,6 +84,7 @@ public class enemyTemplate {
         if (health <= 0) {
             health = 0; // Ensure health does not go below zero
             isActive = false; // Set enemy to inactive when health reaches zero
+            lootDrop();
         }
     } 
 
@@ -110,6 +112,17 @@ public class enemyTemplate {
         return (int) maxHealth; // Return the maximum health of the enemy
     }
 
+    public void lootDrop(){
+        //add enemy health to player health
+        currentWorld.currentPlayer.addHealth(health);
+    }
+
+    public void addItemToPlayerInventory(item item) {
+        if (currentWorld.currentPlayer != null) {
+            currentWorld.currentPlayer.inventory.addItem(item); // Add the item to the player's inventory
+        }
+    }
+
     public void update() {
         // Get current time for movement logic
         long currentTime = System.currentTimeMillis();
@@ -119,6 +132,7 @@ public class enemyTemplate {
         if(!isActive) {
             //only remvoe the enemy once all of its bullets are gone
             if(attack.getBullets().size() <= 0) {
+                
                 currentWorld.getEnemies().remove(this); // Remove the enemy from the world if health is zero
             }
             return; // If the enemy is not active, skip the update

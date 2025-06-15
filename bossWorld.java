@@ -21,7 +21,7 @@ public class bossWorld extends worldTemplate {
 
     public bossWorld(mainPanel myMainPanel) {
         super(worldTemplate.loadAWorld("world/bossWorldTiles/grassTilesWorld.txt"),worldTemplate.loadAWorld("world/bossWorldTiles/pathTilesWorld.txt"),worldTemplate.loadAWorld("world/bossWorldTiles/collisionWorld.txt"));
-        setCurrentPlayer(new playerWater(2163, 2744, this, null, null)); //60, 615
+        setCurrentPlayer(new playerWater(2163, 2744, this, null, null,null,0,0,2,2)); //60, 615
         currentUI = new mainUI(this);
         currentUI.updateHealth(currentPlayer.getHealth());
 
@@ -119,6 +119,7 @@ public class bossWorld extends worldTemplate {
         myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
+            currentPlayer.inventory.saveInventory();
         }
     }
 }

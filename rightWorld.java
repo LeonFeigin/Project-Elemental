@@ -11,7 +11,7 @@ public class rightWorld extends worldTemplate {
 
     public rightWorld(mainPanel myMainPanel) {
         super(worldTemplate.loadAWorld("world/rightWorldTiles/grassTilesWorld.txt"),worldTemplate.loadAWorld("world/rightWorldTiles/pathTilesWorld.txt"),worldTemplate.loadAWorld("world/rightWorldTiles/collisionWorld.txt"));
-        setCurrentPlayer(new playerWater(115, 550, this, null, null)); //60, 615
+        setCurrentPlayer(new playerWater(115, 550, this, null, null,null,0,0,2,2)); //60, 615
         currentUI = new mainUI(this);
         currentUI.updateHealth(currentPlayer.getHealth());
 
@@ -43,6 +43,7 @@ public class rightWorld extends worldTemplate {
         myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
+            currentPlayer.inventory.saveInventory();
         }
     }
 }

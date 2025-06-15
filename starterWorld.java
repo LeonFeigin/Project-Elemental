@@ -3,6 +3,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
+import java.awt.event.MouseEvent;
+
 import enemy.enemySpawner;
 import enemy.enemyTemplate;
 import enemy._enemies.dummyEnemy;
@@ -10,7 +12,10 @@ import player.playerWater;
 import ui.mainUI;
 import world.worldTemplate;
 
-public class starterWorld extends worldTemplate {
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+
+public class starterWorld extends worldTemplate implements KeyListener, MouseListener{
 
     mainPanel myMainPanel;
 
@@ -18,13 +23,13 @@ public class starterWorld extends worldTemplate {
         //travelFrom = 0 means from leftWorld, 1 means from rightWorld, 2 means from boss world, 3 means from nowhere
         super(worldTemplate.loadAWorld("world/starterWorldTiles/grassTilesWorld.txt"),worldTemplate.loadAWorld("world/starterWorldTiles/pathTilesWorld.txt"),worldTemplate.loadAWorld("world/starterWorldTiles/collisionTilesWorld.txt"));
         if(travelFrom == 3){
-            setCurrentPlayer(new playerWater(1620,3025, this, null, null)); //5786, 4839
+            setCurrentPlayer(new playerWater(5786, 4839, this, null, null,null,0,0,2,2));
         }else if(travelFrom == 0){
-            setCurrentPlayer(new playerWater(110, 420, this, null, null));
+            setCurrentPlayer(new playerWater(110, 420, this, null, null,null,0,0,2,2));
         }else if(travelFrom == 1){
-            setCurrentPlayer(new playerWater(10070, 1797, this, null, null));
+            setCurrentPlayer(new playerWater(10070, 1797, this, null, null,null,0,0,2,2));
         }else if(travelFrom == 2){
-            setCurrentPlayer(new playerWater(4883, 100, this, null, null));
+            setCurrentPlayer(new playerWater(4883, 100, this, null, null,null,0,0,2,2));
         }
         currentUI = new mainUI(this);
         currentUI.updateHealth(currentPlayer.getHealth());
@@ -96,10 +101,29 @@ public class starterWorld extends worldTemplate {
     }
 
     @Override
+    public void mouseReleased(MouseEvent e) {
+        if(!currentUI.isInMenu()){
+            if(e.getButton() == MouseEvent.BUTTON1){
+                currentPlayer.attack(e.getX()+worldXOffset, e.getY()+worldYOffset); // Attack at the mouse click position
+            }else if(e.getButton() == MouseEvent.BUTTON3){
+                currentPlayer.specialAttack(e.getX()+worldXOffset, e.getY()+worldYOffset);
+            }
+            if(e.getX() > 10 && e.getX() < 10 + 32 && e.getY() > 10 && e.getY() < 10 + 32) {
+                currentUI.setInMenu(true); // Open the menu if the settings icon is clicked
+                currentUI.inPauseMenu = true;
+                return;
+            }
+        }else{
+            currentUI.mouseClicked(e.getX(), e.getY()); // Handle mouse press in the UI
+        }
+    }
+
+    @Override
     public void quitGame(){
         myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
+            currentPlayer.inventory.saveInventory();
         }
     }
 }
