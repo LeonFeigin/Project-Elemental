@@ -8,12 +8,13 @@ This is my final project for grade 11 AP Comp Sci, fully written in Java.
 
 This game was inspired by Touhou's bullet hell and Genshin Impact's Elemental Match Up
 
-
-## How to play
+## How to run the game
 
 Run the run.bat file which will auto-compile all of the java files for you. (Assuming you have java installed)
 
 If you are running into errors while compilying, try downloading the pre-compiled version in [latest release](https://github.com/LeonFeigin/Project-Elemental/releases/latest)
+
+## How to play
 
 By killing other monsters, you can collect various of armor that grants you buffs.
 
