@@ -38,6 +38,8 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
         //stop playing all audios
         if(currentWorld != null) {
             currentWorld.audioPlayer.stopPlaying();
+            currentWorld.currentPlayer.savePlayerState();
+            currentWorld.currentPlayer.inventory.saveInventory();
         }
 
         //remove from all listeners
