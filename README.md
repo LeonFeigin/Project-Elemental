@@ -11,6 +11,8 @@ This game was inspired by Touhou's bullet hell and Genshin Impact's Elemental Ma
 
 ## How to play
 
+Run The mainProg.java file
+
 By killing other monsters, you can collect various of armor that grants you buffs.
 
 Using elemental match-ups and your newly acquired armor, you can defeat the main boss that is located at the top of the world.
