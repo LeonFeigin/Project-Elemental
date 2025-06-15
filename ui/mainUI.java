@@ -306,17 +306,21 @@ public class mainUI {
             }
         }else if(deathMenu){
             if(x > 547 && x < 734 && y > 443 && y < 568){ // restart button
-                for (int i = 0; i < 5; i++) {
-                    try {
-                        File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayer(i).getPlayerName().replace(" ", "")+".txt");
-                        if(file.exists()) {
-                            file.delete();
-                        }
-                    } catch (Exception e) {
-                        
+                try {
+                    File invFile = new File("inventory/savedInventory.txt");
+                    if(invFile.exists()) {
+                        invFile.delete(); // Delete the saved inventory file
                     }
+                    for (int i = 0; i < 5; i++) {
+                        File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayer(i).getPlayerName().replace(" ", "")+".txt");
+                            if(file.exists()) {
+                                file.delete();
+                            }
+                    }
+                    currentWorld.quitGame();
+                } catch (Exception e) {
+                    // TODO: handle exception
                 }
-                currentWorld.quitGame();
             }
         }else if(winMenu){
             if(x > 546 && x < 735 && y > 445 && y < 563){ // restart button
