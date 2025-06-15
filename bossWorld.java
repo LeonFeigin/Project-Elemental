@@ -44,9 +44,11 @@ public class bossWorld extends worldTemplate {
         if(!hasBossStarted){
             if(currentPlayer.y < 2328){
                 hasBossStarted = true;
+                //change the world when boss spawns
                 setGrassTilesWorld(worldTemplate.loadAWorld("world/bossWorldTiles/bossWorld/grassTilesWorld.txt"));
                 setCollideTiles(worldTemplate.loadAWorld("world/bossWorldTiles/bossWorld/collisionWorld.txt"));
                 setPathTilesWorld(worldTemplate.loadAWorld("world/bossWorldTiles/bossWorld/pathTilesWorld.txt"));
+
                 //spawn boss at 2208 1009
                 enemies.add(new enemy._enemies.bossEnemy(2208, 1009, this));
 
@@ -59,7 +61,7 @@ public class bossWorld extends worldTemplate {
                 enemySpawners.add(new enemySpawner(2560, 502, 4, this, 2000, 10, 100));
                 enemySpawners.add(new enemySpawner(3040, 930, 3, this, 2000, 10, 100));
             }
-        }else{
+        }else if(!hasBossEnded){
             if(delayedBossHealth > enemies.get(0).health){
                 // Update delayed boss health to match the current health of the boss
                 delayedBossHealth -= (enemies.get(0).getMaxHealth()/300.0);
@@ -73,6 +75,7 @@ public class bossWorld extends worldTemplate {
 
                 hasBossEnded = true; // Reset the boss fight state
 
+                currentUI.setInMenu(true);
                 currentUI.winMenu = true; // Set the UI to indicate the player has won
             }
         }
@@ -80,6 +83,8 @@ public class bossWorld extends worldTemplate {
 
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         if(hasBossStarted && !hasBossEnded) {
             //draw the name of the boss
             g.setColor(Color.BLACK);
@@ -93,7 +98,7 @@ public class bossWorld extends worldTemplate {
             drawBossHealth(g, 384, 50);
         }
 
-        super.paintComponent(g);
+        
     }
 
     public void drawBossHealth(Graphics g, int x, int y){

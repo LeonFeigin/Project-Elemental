@@ -208,9 +208,7 @@ public class worldTemplate extends JPanel implements KeyListener, MouseListener 
     }
 
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
-        //draw a white background
+        //draw a black background
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 1280, 720);
 

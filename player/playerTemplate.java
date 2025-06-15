@@ -310,6 +310,21 @@ public class playerTemplate{
             g.fillArc(x-worldXOffset-6, y-worldYOffset-6, 12, 12, 0, 360);
         }
     }
+    //only used for drawing the player in the mainUI
+    public void draw(int x, int y, Graphics g) {
+        BufferedImage img = idleImage; // Assuming idleImage is set
+        if(yVel > 0){
+            img = runningDownImages[currentFrame];
+        }else if(yVel < 0){
+            img = runningUpImages[currentFrame];
+        }else if(xVel < 0){
+            img = runningLeftImages[currentFrame];
+        }else if (xVel > 0) {
+            img = runningRightImages[currentFrame];
+        }
+        
+        g.drawImage(img, x-16, y-16, null); 
+    }
 
     public void resetPlayer() {
         

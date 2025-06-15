@@ -86,6 +86,7 @@ public class mainUI {
 
         // Draw the base background
         g.drawImage(healthBaseBackground, 20, 20, null);
+        currentWorld.currentPlayer.draw(64,64, g); // Draw the current player
 
         // Draw settings icon
         g.drawImage(icons[5], 10, 10, 32,32, null);
@@ -96,6 +97,9 @@ public class mainUI {
             }
             else if(deathMenu){
                 drawDeathScreen(g);
+            }
+            else if(winMenu){
+                drawWinScreen(g);
             }
         }
 
@@ -182,6 +186,22 @@ public class mainUI {
         int healthWidth = (int)(xSize * ((float)currentWorld.playerSwitch.playerHealths[playerId] / currentWorld.playerSwitch.playerMaxHealths[playerId]));
         g.drawImage(healthBarImages[1], x, y, x + healthWidth, y + ySize, 0, 0, (int)(256 * ((float)currentWorld.playerSwitch.playerHealths[playerId] / currentWorld.playerSwitch.playerMaxHealths[playerId])), 64, null);
     }
+    
+    public void drawDeathScreen(Graphics g){
+        // Draw a semi-transparent background for the pause menu
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, 1280, 720);
+
+        g.drawImage(deathMenuImage, 100, 100, 1080, 520,null);
+    }
+
+    public void drawWinScreen(Graphics g){
+        // Draw a semi-transparent background for the pause menu
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, 1280, 720);
+
+        g.drawImage(sprite.getImages("ui/winMenu/", 1080, 520), 100, 100, null);
+    }
 
     public void drawDebug(Graphics g) {
         //debug info
@@ -225,17 +245,6 @@ public class mainUI {
         }
     }
 
-    public void drawDeathScreen(Graphics g){
-        // Draw a semi-transparent background for the pause menu
-        g.setColor(new Color(0, 0, 0, 150));
-        g.fillRect(0, 0, 1280, 720);
-
-        g.drawImage(deathMenuImage, 100, 100, 1080, 520,null);
-    }
-
-    public void drawWinScreen(Graphics g){
-        //TODO
-    }
 
     public void mouseClicked(int x, int y) {
         if(inMenu){
@@ -259,6 +268,11 @@ public class mainUI {
                         }
                     }
                     currentWorld.quitGame();
+                }
+            }else if(winMenu){
+                if(x > 546 && x < 735 && y > 445 && y < 563){ // restart button
+                    setInMenu(false);
+                    winMenu = false; // Reset win menu state
                 }
             }
         }

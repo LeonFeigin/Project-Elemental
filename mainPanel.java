@@ -19,7 +19,7 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
 
     Timer timer;
     public mainPanel(){
-        setWorld(new bossWorld(this));
+        setWorld(new starterWorld(this, 3));
 
         timer = new Timer(1, e -> {
             currentWorld.update();
