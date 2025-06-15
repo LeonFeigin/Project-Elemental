@@ -180,7 +180,7 @@ public class inventory {
         //draw item boosts
         g.drawString("Damage Boost: " + item.getDamageBoost(), x + 5, y + 61); // Draw the damage boost
         g.drawString("Health Boost: " + item.getHealthBoost(), x + 5, y + 77); // Draw the health boost
-        g.drawString("Attack Speed Boost: " + item.getAttackSpeedBoost(), x + 5, y + 93); // Draw the attack speed boost
+        g.drawString("Attack Speed Boost: " + Math.round(item.getAttackSpeedBoost()*100)/100f, x + 5, y + 93); // Draw the attack speed boost
     }
 
     public void saveInventory() {

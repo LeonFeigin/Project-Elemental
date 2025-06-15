@@ -183,8 +183,14 @@ public class playerTemplate{
         return attackDamage+damageBuff; // Return the attack damage with buffs applied
     }
 
-    public int getAttackCooldown() {
-        return attackCooldown;
+    public float getAttackCooldown() {
+        float cooldownBuff = 0; // Initialize cooldown buff
+        for (item item : inventory.getEquipt()) {
+            if(item != null){
+                cooldownBuff += item.getAttackSpeedBoost(); // Apply attack speed boost from equipped items
+            }
+        }
+        return (float)(Math.round((attackCooldown-cooldownBuff*1000)*100)/100.0);
     }
 
     public String getPlayerName() {
