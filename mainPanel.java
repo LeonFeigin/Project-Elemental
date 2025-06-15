@@ -22,7 +22,7 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
     public mainPanel(){
         setWorld(new mainMenu(this));
 
-        timer = new Timer(1, e -> {
+        timer = new Timer(8, e -> {
             currentWorld.update();
 
             if (mainPanel.this.isFocusOwner()) {

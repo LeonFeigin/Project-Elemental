@@ -5,5 +5,5 @@ if %errorlevel% neq 0 (
     pause
     exit /b %errorlevel%
 )
-java mainProg
+java -cp . mainProg
 pause
