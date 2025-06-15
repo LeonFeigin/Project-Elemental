@@ -116,6 +116,7 @@ public class inventory {
 
             if (currentEquiped[itemWearability] == null && x >= 680 + itemWearability * 84 && x <= 680 + itemWearability * 84 + 32 && y >= 175 && y <= 175 + 32) {
                 currentEquiped[itemWearability] = items.get(itemIndexPressed); // Equip the item
+                currentWorld.audioPlayer.playAudio("equip"); // Play equip sound
                 items.remove(itemIndexPressed); // Remove the item from the inventory
                 itemPositions.remove(itemIndexPressed); // Remove the item's position
             }else if(x > 1025 && x < 1025+64 && y > 235 && y < 235+64) {

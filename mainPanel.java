@@ -35,8 +35,15 @@ public class mainPanel extends JPanel implements MouseListener, KeyListener{
     }
 
     public void setWorld(worldTemplate world) {
+        //stop playing all audios
+        if(currentWorld != null) {
+            currentWorld.audioPlayer.stopPlaying();
+        }
+
+        //remove from all listeners
         removeKeyListener(currentWorld);
         removeMouseListener(currentWorld);
+
         this.currentWorld = world;
         addKeyListener(currentWorld);
         addMouseListener(currentWorld);

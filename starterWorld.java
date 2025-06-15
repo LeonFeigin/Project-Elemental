@@ -15,6 +15,8 @@ import world.worldTemplate;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 
+import audio.audioPlayer;
+
 public class starterWorld extends worldTemplate implements KeyListener, MouseListener{
 
     mainPanel myMainPanel;
