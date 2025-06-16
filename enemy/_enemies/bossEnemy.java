@@ -53,5 +53,6 @@ public class bossEnemy extends enemyTemplate{
             itemDrop.setAttackSpeedBoost((float)(Math.random() * 0.2 + 0.3f)); // 0.2 to 0.5 attack speed boost
         }
         currentWorld.currentPlayer.inventory.addItem(itemDrop); // Add the item to the player's inventory
+        currentWorld.currentPlayer.inventory.saveInventory();
     }
 }

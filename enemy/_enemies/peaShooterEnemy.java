@@ -48,5 +48,6 @@ public class peaShooterEnemy extends enemyTemplate{
             }
             currentWorld.currentPlayer.inventory.addItem(itemDrop); // Add the item to the player's inventory
         }
+        currentWorld.currentPlayer.inventory.saveInventory();
     }
 }
