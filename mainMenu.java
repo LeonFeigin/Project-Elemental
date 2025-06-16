@@ -25,12 +25,12 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         
         this.currentPanel = panel; // Set the reference to the main panel
 
-        setCurrentPlayer(new playerWater(0, 0, this, null, null,null,0,0,2,2));
+        // setCurrentPlayer(new playerWater(0, 0, this, null, null,null,0,0,2,2));
 
         sprite.getImages("world/tileset/button/", buttons, 200,133, 3); // Load the button images for play, settings, and exit 
         title = sprite.getImages("world/tileset/button/title/", 215,55); // Load the title image (12.5x : 1y)
 
-        currentUI = new mainUI(this);
+        // currentUI = new mainUI(this);
 
         enemySpawners.add(new enemy.enemySpawner(892, 362, (int)Math.round(Math.random()*6), this, 1, (int)Math.round(Math.random()*6)+5, 200)); // Example enemy spawner
     }
@@ -44,6 +44,7 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
         for (int i = 0; i < enemySpawners.size(); i++) {
             enemySpawners.get(i).update();
         }
+        audioPlayer.update();
     }
 
     @Override
@@ -64,6 +65,16 @@ public class mainMenu extends worldTemplate implements KeyListener, MouseListene
     @Override
     public void keyPressed(KeyEvent e) {
         // dont let the world do anything when a key is pressed in the main menu
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // do nothing on key released in the main menu
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // do nothing on mouse pressed in the main menu
     }
     
     @Override

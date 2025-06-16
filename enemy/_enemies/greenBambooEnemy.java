@@ -31,6 +31,9 @@ public class greenBambooEnemy extends enemyTemplate{
     @Override
     public void lootDrop(){
         super.lootDrop();
+        if(currentWorld.currentPlayer == null) {
+            return; // If there is no current player, do not drop loot
+        }
         if (Math.random() > 0.5) { // 50% chance to drop
             item itemDrop = new basicChestplate();
             double rarity = Math.random();

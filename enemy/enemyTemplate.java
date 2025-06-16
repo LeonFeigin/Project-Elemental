@@ -114,6 +114,9 @@ public class enemyTemplate {
     }
 
     public void lootDrop(){
+        if(currentWorld.currentPlayer == null) {
+            return; // If there is no current player, do not drop loot
+        }
         //add enemy health to player health
         currentWorld.currentPlayer.addHealth((int)(maxHealth / 10)); // Add a portion of the enemy's max health to the player's health
     }

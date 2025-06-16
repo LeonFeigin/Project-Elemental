@@ -35,6 +35,9 @@ public class bossEnemy extends enemyTemplate{
     @Override
     public void lootDrop(){
         super.lootDrop();
+        if(currentWorld.currentPlayer == null) {
+            return; // If there is no current player, do not drop loot
+        }
         item[] itemSelection = new item[]{new opBoots(), new basicPants(), new opChestplate(), new opHelmet()}; // Possible item drops
         int randomIndex = (int)(Math.random() * itemSelection.length); // Randomly select an item from the array
         item itemDrop = itemSelection[randomIndex]; // Get the randomly selected item
