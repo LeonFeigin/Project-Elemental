@@ -78,15 +78,15 @@ public class playerSwitch {
     public String getPlayerNameFromID(int id){
         String playerString = "";
         if(id == 0) {
-            playerString = "playerFire";
+            playerString = "FireGuy";
         }else if(id == 1) {
-            playerString = "playerWater";
+            playerString = "WaterGuy";
         }else if(id == 2) {
-            playerString = "playerEarth";
+            playerString = "EarthGuy";
         }else if(id == 3) {
-            playerString = "playerIce";
+            playerString = "IceGuy";
         }else if(id == 4) {
-            playerString = "playerLightning";
+            playerString = "LightningGuy";
         }
         return playerString;
     }

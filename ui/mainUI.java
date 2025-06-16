@@ -314,6 +314,7 @@ public class mainUI {
             }
         }else if(deathMenu){
             if(x > 547 && x < 734 && y > 443 && y < 568){ // restart button
+                System.out.println("AAA");
                 try {
                     File invFile = new File("inventory/savedInventory.txt");
                     PrintWriter pw = new PrintWriter(invFile);
@@ -329,9 +330,11 @@ public class mainUI {
                         }
                         pw.close();
                         scan.close();
+                        System.out.println("SAVED");
                     }
                     currentWorld.quitGame();
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }else if(winMenu){
