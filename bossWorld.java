@@ -122,10 +122,10 @@ public class bossWorld extends worldTemplate {
 
     @Override
     public void quitGame(){
-        myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
             currentPlayer.inventory.saveInventory();
         }
+        myMainPanel.setWorld(new mainMenu(myMainPanel));
     }
 }

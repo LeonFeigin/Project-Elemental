@@ -125,10 +125,11 @@ public class starterWorld extends worldTemplate implements KeyListener, MouseLis
 
     @Override
     public void quitGame(){
-        myMainPanel.setWorld(new mainMenu(myMainPanel));
         if(!currentUI.deathMenu){
             currentPlayer.savePlayerState();
             currentPlayer.inventory.saveInventory();
         }
+        myMainPanel.setWorld(new mainMenu(myMainPanel));
+        
     }
 }

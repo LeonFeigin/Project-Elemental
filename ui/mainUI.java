@@ -325,7 +325,6 @@ public class mainUI {
                     }
                     currentWorld.quitGame();
                 } catch (Exception e) {
-                    // TODO: handle exception
                 }
             }
         }else if(winMenu){
