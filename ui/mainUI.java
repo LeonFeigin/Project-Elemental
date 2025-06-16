@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import player.playerSwitch;
 import player.sprite;
@@ -314,14 +316,19 @@ public class mainUI {
             if(x > 547 && x < 734 && y > 443 && y < 568){ // restart button
                 try {
                     File invFile = new File("inventory/savedInventory.txt");
-                    if(invFile.exists()) {
-                        invFile.delete(); // Delete the saved inventory file
-                    }
+                    PrintWriter pw = new PrintWriter(invFile);
+                    pw.close();
+
                     for (int i = 0; i < 5; i++) {
                         File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayerNameFromID(i)+".txt");
-                            if(file.exists()) {
-                                file.delete();
-                            }
+                        File dFile = new File("player/defaultSaves/"+currentWorld.playerSwitch.getPlayerNameFromID(i)+".txt");
+                        Scanner scan = new Scanner(dFile);
+                        pw = new PrintWriter(file);
+                        while(scan.hasNextLine()){
+                            pw.println(scan.nextLine());
+                        }
+                        pw.close();
+                        scan.close();
                     }
                     currentWorld.quitGame();
                 } catch (Exception e) {
