@@ -318,7 +318,7 @@ public class mainUI {
                         invFile.delete(); // Delete the saved inventory file
                     }
                     for (int i = 0; i < 5; i++) {
-                        File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayer(i).getPlayerName().replace(" ", "")+".txt");
+                        File file = new File("player/saves/"+currentWorld.playerSwitch.getPlayerNameFromID(i)+".txt");
                             if(file.exists()) {
                                 file.delete();
                             }

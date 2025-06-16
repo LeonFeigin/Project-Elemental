@@ -1,5 +1,8 @@
 package player;
 
+import java.io.File;
+import java.util.Scanner;
+
 import world.worldTemplate;
 
 public class playerSwitch {
@@ -18,7 +21,7 @@ public class playerSwitch {
     public playerSwitch(worldTemplate currentWorld) {
         this.currentWorld = currentWorld;
         for (int i = 0; i < 5; i++) {
-            playerHealths[i] = getPlayer(i).getHealth(); // Initialize health for each player type
+            playerHealths[i] = getPlayerHealthFromID(i); // Initialize health for each player type
         }
     }
 
@@ -36,31 +39,31 @@ public class playerSwitch {
         saveCurrentPlayerHealth(currentWorld.currentPlayer);
 
         if(currentPlayerSelection[playerType] == 0) {
-            if(getPlayer(0).getHealth() <= 0){
+            if(getPlayerHealthFromID(0) <= 0){
                 return;
             }
             currentWorld.setCurrentPlayer(new playerFire(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{1,2,3,4};
         }else if(currentPlayerSelection[playerType] == 1) {
-            if(getPlayer(1).getHealth() <= 0){
+            if(getPlayerHealthFromID(1) <= 0){
                 return;
             }
             currentWorld.setCurrentPlayer(new playerWater(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,2,3,4};
         }else if(currentPlayerSelection[playerType] == 2) {
-            if(getPlayer(2).getHealth() <= 0){
+            if(getPlayerHealthFromID(2) <= 0){
                 return;
             }
             currentWorld.setCurrentPlayer(new playerEarth(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,1,3,4};
         }else if(currentPlayerSelection[playerType] == 3) {
-            if(getPlayer(3).getHealth() <= 0){
+            if(getPlayerHealthFromID(3) <= 0){
                 return;
             }
             currentWorld.setCurrentPlayer(new playerIce(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
             currentPlayerSelection = new int[]{0,1,2,4};
         }else if(currentPlayerSelection[playerType] == 4) {
-            if(getPlayer(4).getHealth() <= 0){
+            if(getPlayerHealthFromID(4) <= 0){
                 return;
             }
             currentWorld.setCurrentPlayer(new playerLightning(currentWorld.currentPlayer.x, currentWorld.currentPlayer.y, currentWorld, currentWorld.currentPlayer.attack,currentWorld.currentPlayer.specialAttack, currentWorld.currentPlayer.inventory, currentWorld.currentPlayer.xVel, currentWorld.currentPlayer.yVel, currentWorld.currentPlayer.speed, currentWorld.currentPlayer.maxSpeed));
@@ -72,19 +75,35 @@ public class playerSwitch {
         currentWorld.currentPlayer.inventory.loadInventory(); // Reload inventory for the new player
     }
 
-    public playerTemplate getPlayer(int id){
+    public String getPlayerNameFromID(int id){
+        String playerString = "";
         if(id == 0) {
-            return new playerFire(0,0,null,null,null,null,0,0,2,2);
+            playerString = "playerFire";
         }else if(id == 1) {
-            return new playerWater(0,0,null,null,null,null,0,0,2,2);
+            playerString = "playerWater";
         }else if(id == 2) {
-            return new playerEarth(0,0,null,null,null,null,0,0,2,2);
+            playerString = "playerEarth";
         }else if(id == 3) {
-            return new playerIce(0,0,null,null,null,null,0,0,2,2);
+            playerString = "playerIce";
         }else if(id == 4) {
-            return new playerLightning(0,0,null,null,null,null,0,0,2,2);
+            playerString = "playerLightning";
         }
-        return null;
+        return playerString;
+    }
+
+    public int getPlayerHealthFromID(int id){
+        String playerName = getPlayerNameFromID(id);
+        if(playerName.equals("")){
+            return 100;
+        }
+        try {
+            File file = new File("player/saves/"+playerName.replace(" ", "")+".txt");
+            Scanner scan = new Scanner(file);
+            return Integer.parseInt(scan.nextLine());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return 100;
     }
 
     private void saveCurrentPlayerHealth(playerTemplate player){

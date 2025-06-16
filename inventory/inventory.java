@@ -103,6 +103,7 @@ public class inventory {
                         itemPositions.add(new int[]{235, 334}); // Add a new position for the item in the inventory
                         currentEquiped[i] = null; // Remove the item from equipped items
                         itemIndexPressed = items.size() - 1; // Set the index of the newly added item
+                        saveInventory();
                     }
                     return;
                 }
@@ -126,6 +127,8 @@ public class inventory {
             }
             updateItemPositions();
         }
+        saveInventory();
+        currentWorld.currentPlayer.savePlayerState();
         mousePressed = false; // Reset the mouse pressed flag
         itemIndexPressed = -1; // Reset the item index pressed
     }
